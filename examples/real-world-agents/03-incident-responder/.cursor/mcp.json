@@ -1,0 +1,38 @@
+{
+  "mcpServers": {
+    "pagerduty": {
+      "command": "npx",
+      "args": ["-y", "@acme/mcp-pagerduty"],
+      "env": {
+        "PAGERDUTY_API_KEY": "${PD_API_KEY}"
+      }
+    },
+    "datadog": {
+      "command": "npx",
+      "args": ["-y", "@acme/mcp-datadog"],
+      "env": {
+        "DD_API_KEY": "${DD_API_KEY}",
+        "DD_APP_KEY": "${DD_APP_KEY}"
+      }
+    },
+    "kubernetes": {
+      "command": "npx",
+      "args": ["-y", "@acme/mcp-kubernetes"],
+      "env": {
+        "KUBECONFIG": "/home/oncall/.kube/config"
+      }
+    },
+    "slack": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-slack"],
+      "env": {
+        "SLACK_BOT_TOKEN": "xoxb-EXAMPLE-TOKEN-DO-NOT-USE",
+        "SLACK_TEAM_ID": "T0000000001"
+      }
+    },
+    "shell": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-shell"]
+    }
+  }
+}

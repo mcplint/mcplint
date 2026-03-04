@@ -1,0 +1,86 @@
+{
+  "servers": [
+    {
+      "name": "github",
+      "description": "GitHub API for PR operations",
+      "tools": [
+        {
+          "name": "get_pull_request_files",
+          "description": "List files changed in a pull request",
+          "parameters": [
+            { "name": "owner", "type": "string", "required": true },
+            { "name": "repo", "type": "string", "required": true },
+            { "name": "pull_number", "type": "number", "required": true }
+          ]
+        },
+        {
+          "name": "create_pull_request_review_comment",
+          "description": "Post a review comment on a PR",
+          "parameters": [
+            { "name": "owner", "type": "string", "required": true },
+            { "name": "repo", "type": "string", "required": true },
+            { "name": "pull_number", "type": "number", "required": true },
+            { "name": "path", "type": "string", "required": true },
+            { "name": "line", "type": "number", "required": true },
+            { "name": "body", "type": "string", "required": true }
+          ]
+        }
+      ],
+      "auth": { "type": "bearer", "token_source": "env" },
+      "transport": "stdio"
+    },
+    {
+      "name": "filesystem",
+      "description": "Read/write files from the local checkout",
+      "tools": [
+        {
+          "name": "read_file",
+          "description": "Read a file from disk",
+          "parameters": [
+            { "name": "path", "type": "string", "required": true }
+          ]
+        },
+        {
+          "name": "write_file",
+          "description": "Write content to a file",
+          "parameters": [
+            { "name": "path", "type": "string", "required": true },
+            { "name": "content", "type": "string", "required": true }
+          ]
+        }
+      ],
+      "auth": { "type": "none" },
+      "transport": "stdio"
+    },
+    {
+      "name": "shell",
+      "description": "Execute shell commands for builds, tests, and linting",
+      "tools": [
+        {
+          "name": "run_command",
+          "description": "Run an arbitrary shell command and return stdout/stderr",
+          "parameters": [
+            { "name": "command", "type": "string", "description": "Shell command to execute", "required": true }
+          ]
+        }
+      ],
+      "auth": { "type": "none" },
+      "transport": "stdio"
+    },
+    {
+      "name": "review-db",
+      "description": "SQLite database for tracking review history",
+      "tools": [
+        {
+          "name": "execute_query",
+          "description": "Execute a SQL query against the review database",
+          "parameters": [
+            { "name": "query", "type": "string", "description": "SQL query to execute", "required": true }
+          ]
+        }
+      ],
+      "auth": { "type": "none" },
+      "transport": "stdio"
+    }
+  ]
+}

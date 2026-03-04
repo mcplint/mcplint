@@ -1,0 +1,34 @@
+{
+  "mcpServers": {
+    "prod-db": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "env": {
+        "POSTGRES_CONNECTION_STRING": "postgresql://analyst:EXAMPLE_PASS@prod-db.acme.io:5432/production"
+      }
+    },
+    "warehouse": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "env": {
+        "POSTGRES_CONNECTION_STRING": "${WAREHOUSE_DB_URL}"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/home/analyst/reports"]
+    },
+    "shell": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-shell"]
+    },
+    "email": {
+      "command": "node",
+      "args": ["./mcp-servers/email-server/index.js"],
+      "env": {
+        "SENDGRID_API_KEY": "SG.EXAMPLE_KEY_DO_NOT_USE.abcdefghijklmnop",
+        "FROM_ADDRESS": "reports@acme.com"
+      }
+    }
+  }
+}

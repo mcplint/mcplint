@@ -1,0 +1,112 @@
+{
+  "servers": [
+    {
+      "name": "knowledge-base",
+      "description": "Pinecone-backed vector search over support documentation. Uses OpenAI text-embedding-3-small for embeddings.",
+      "tools": [
+        {
+          "name": "semantic_search",
+          "description": "Search the knowledge base using natural language",
+          "parameters": [
+            { "name": "query", "type": "string", "description": "Natural language search query", "required": true },
+            { "name": "top_k", "type": "number", "description": "Number of results to return", "required": false },
+            { "name": "namespace", "type": "string", "description": "Pinecone namespace to search", "required": false },
+            { "name": "include_metadata", "type": "boolean", "description": "Include document metadata", "required": false }
+          ]
+        },
+        {
+          "name": "get_article",
+          "description": "Fetch a specific KB article by ID",
+          "parameters": [
+            { "name": "article_id", "type": "string", "required": true }
+          ]
+        }
+      ],
+      "auth": { "type": "api_key", "header": "X-API-Key" },
+      "transport": "stdio"
+    },
+    {
+      "name": "crm",
+      "description": "HubSpot CRM for customer lookups",
+      "tools": [
+        {
+          "name": "get_contact_by_email",
+          "description": "Look up a contact by their email address. Returns name, plan, account age, and custom properties.",
+          "parameters": [
+            { "name": "email", "type": "string", "description": "Customer email address", "required": true }
+          ]
+        },
+        {
+          "name": "update_contact",
+          "description": "Update a CRM contact's properties",
+          "parameters": [
+            { "name": "email", "type": "string", "required": true },
+            { "name": "properties", "type": "object", "description": "Properties to update", "required": true }
+          ]
+        }
+      ],
+      "auth": { "type": "bearer", "token_source": "env" },
+      "transport": "stdio"
+    },
+    {
+      "name": "ticket-db",
+      "description": "PostgreSQL database storing support tickets and interaction logs",
+      "tools": [
+        {
+          "name": "execute_query",
+          "description": "Run a SQL query against the support ticket database",
+          "parameters": [
+            { "name": "query", "type": "string", "description": "SQL query to execute", "required": true }
+          ]
+        }
+      ],
+      "auth": { "type": "none" },
+      "transport": "stdio",
+      "env": {
+        "POSTGRES_CONNECTION_STRING": "postgresql://support_bot:EXAMPLE_PASS@tickets-db.acme.io:5432/support"
+      }
+    },
+    {
+      "name": "email",
+      "description": "SendGrid-based email sender for support replies",
+      "tools": [
+        {
+          "name": "send_email",
+          "description": "Send an email to a customer",
+          "parameters": [
+            { "name": "to", "type": "string", "required": true },
+            { "name": "subject", "type": "string", "required": true },
+            { "name": "body_html", "type": "string", "required": true },
+            { "name": "reply_to_thread", "type": "string", "required": false }
+          ]
+        }
+      ],
+      "auth": { "type": "api_key", "header": "Authorization" },
+      "transport": "https",
+      "url": "https://email-mcp.acme.io/v1"
+    },
+    {
+      "name": "filesystem",
+      "description": "Local filesystem for email templates and attachments",
+      "tools": [
+        {
+          "name": "read_file",
+          "description": "Read a file from disk",
+          "parameters": [
+            { "name": "path", "type": "string", "required": true }
+          ]
+        },
+        {
+          "name": "write_file",
+          "description": "Write content to a file on disk",
+          "parameters": [
+            { "name": "path", "type": "string", "required": true },
+            { "name": "content", "type": "string", "required": true }
+          ]
+        }
+      ],
+      "auth": { "type": "none" },
+      "transport": "stdio"
+    }
+  ]
+}
