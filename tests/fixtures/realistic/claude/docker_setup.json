@@ -1,0 +1,38 @@
+{
+  "mcpServers": {
+    "docker-filesystem": {
+      "command": "docker",
+      "args": [
+        "run", "-i", "--rm",
+        "-v", "/home/user/projects:/data",
+        "mcp/filesystem-server:latest",
+        "/data"
+      ]
+    },
+    "docker-postgres": {
+      "command": "docker",
+      "args": [
+        "run", "-i", "--rm",
+        "--network", "host",
+        "-e", "POSTGRES_CONNECTION_STRING=${DATABASE_URL}",
+        "mcp/postgres-server:latest"
+      ]
+    },
+    "docker-puppeteer": {
+      "command": "docker",
+      "args": [
+        "run", "-i", "--rm",
+        "--cap-add=SYS_ADMIN",
+        "mcp/puppeteer-server:latest"
+      ]
+    },
+    "docker-shell": {
+      "command": "docker",
+      "args": [
+        "run", "-i", "--rm",
+        "-v", "/:/host",
+        "mcp/shell-server:latest"
+      ]
+    }
+  }
+}

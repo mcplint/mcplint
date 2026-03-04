@@ -1,0 +1,143 @@
+name: 'mcplint'
+description: 'Static security analyzer for MCP configurations — scan, diff, and report'
+branding:
+  icon: 'shield'
+  color: 'red'
+
+inputs:
+  path:
+    description: 'File or directory to scan'
+    required: false
+    default: '.'
+  mode:
+    description: 'Operation mode: "scan" or "diff"'
+    required: false
+    default: 'scan'
+  format:
+    description: 'Output format: text, json, markdown, sarif'
+    required: false
+    default: 'sarif'
+  fail-on:
+    description: 'Severity threshold to fail (scan mode): critical, high, medium, low'
+    required: false
+    default: 'high'
+  fail-on-new:
+    description: 'Severity threshold for new findings (diff mode): critical, high, medium, low, none'
+    required: false
+    default: 'low'
+  baseline:
+    description: 'Path to findings baseline file (required for diff mode)'
+    required: false
+  save-baseline:
+    description: 'Save scan findings as baseline to this path'
+    required: false
+  config:
+    description: 'Path to .mcplint.toml config file'
+    required: false
+  version:
+    description: 'mcplint version to install (default: latest)'
+    required: false
+    default: 'latest'
+  upload-sarif:
+    description: 'Upload SARIF to GitHub Code Scanning'
+    required: false
+    default: 'true'
+  comment-on-pr:
+    description: 'Post results as PR comment'
+    required: false
+    default: 'false'
+  comment-header:
+    description: 'Header for PR comment'
+    required: false
+    default: 'mcplint scan results'
+
+outputs:
+  findings-count:
+    description: 'Total findings count'
+    value: ${{ steps.run.outputs.findings-count }}
+  critical-count:
+    description: 'Critical findings count'
+    value: ${{ steps.run.outputs.critical-count }}
+  high-count:
+    description: 'High findings count'
+    value: ${{ steps.run.outputs.high-count }}
+  new-findings-count:
+    description: 'New findings count (diff mode)'
+    value: ${{ steps.run.outputs.new-findings-count }}
+  resolved-findings-count:
+    description: 'Resolved findings count (diff mode)'
+    value: ${{ steps.run.outputs.resolved-findings-count }}
+  exit-code:
+    description: 'mcplint exit code (0=clean, 1=error, 2=violations)'
+    value: ${{ steps.run.outputs.exit-code }}
+  sarif-file:
+    description: 'Path to SARIF file'
+    value: ${{ steps.run.outputs.sarif-file }}
+  baseline-file:
+    description: 'Path to saved baseline'
+    value: ${{ steps.run.outputs.baseline-file }}
+
+runs:
+  using: 'composite'
+  steps:
+    - id: cache
+      uses: actions/cache@v4
+      with:
+        path: ~/.mcplint/bin
+        key: mcplint-${{ runner.os }}-${{ runner.arch }}-${{ inputs.version }}
+
+    - id: install
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: ${{ github.action_path }}/install.sh
+      env:
+        MCPLINT_VERSION: ${{ inputs.version }}
+
+    - id: add-path
+      shell: bash
+      run: echo "${HOME}/.mcplint/bin" >> "$GITHUB_PATH"
+
+    - id: run
+      shell: bash
+      run: ${{ github.action_path }}/run.sh
+      env:
+        INPUT_MODE: ${{ inputs.mode }}
+        INPUT_PATH: ${{ inputs.path }}
+        INPUT_FORMAT: ${{ inputs.format }}
+        INPUT_FAIL_ON: ${{ inputs.fail-on }}
+        INPUT_FAIL_ON_NEW: ${{ inputs.fail-on-new }}
+        INPUT_BASELINE: ${{ inputs.baseline }}
+        INPUT_SAVE_BASELINE: ${{ inputs.save-baseline }}
+        INPUT_CONFIG: ${{ inputs.config }}
+
+    - id: upload-sarif
+      if: >-
+        ${{ inputs.upload-sarif == 'true'
+            && inputs.format == 'sarif'
+            && always()
+            && steps.run.outputs.sarif-file != '' }}
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: ${{ steps.run.outputs.sarif-file }}
+        category: mcplint
+
+    - id: comment
+      if: >-
+        ${{ inputs.comment-on-pr == 'true'
+            && github.event_name == 'pull_request'
+            && always()
+            && steps.run.outcome != 'skipped' }}
+      shell: bash
+      run: ${{ github.action_path }}/comment.sh
+      env:
+        GH_TOKEN: ${{ github.token }}
+        COMMENT_HEADER: ${{ inputs.comment-header }}
+        COMMENT_MODE: ${{ inputs.mode }}
+        COMMENT_EXIT_CODE: ${{ steps.run.outputs.exit-code }}
+        COMMENT_FINDINGS: ${{ steps.run.outputs.findings-count }}
+        COMMENT_CRITICAL: ${{ steps.run.outputs.critical-count }}
+        COMMENT_HIGH: ${{ steps.run.outputs.high-count }}
+        COMMENT_NEW: ${{ steps.run.outputs.new-findings-count }}
+        COMMENT_RESOLVED: ${{ steps.run.outputs.resolved-findings-count }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        REPO: ${{ github.repository }}

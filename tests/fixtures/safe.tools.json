@@ -1,0 +1,40 @@
+{
+  "server_name": "safe-server",
+  "tools": [
+    {
+      "name": "get_weather",
+      "description": "Returns current weather for a city",
+      "parameters": [
+        {
+          "name": "city",
+          "type": "string",
+          "description": "City name",
+          "required": true,
+          "constraints": {
+            "maxLength": 100,
+            "pattern": "^[a-zA-Z\\s-]+$"
+          }
+        }
+      ]
+    },
+    {
+      "name": "get_time",
+      "description": "Returns the current time in a timezone",
+      "parameters": [
+        {
+          "name": "timezone",
+          "type": "string",
+          "description": "IANA timezone name",
+          "required": false,
+          "constraints": {
+            "enum": ["UTC", "US/Eastern", "US/Pacific", "Europe/London", "Asia/Tokyo"]
+          }
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "oauth",
+    "scopes": ["read"]
+  }
+}

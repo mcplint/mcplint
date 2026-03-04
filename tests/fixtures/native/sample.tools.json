@@ -1,0 +1,23 @@
+{
+  "server_name": "db-tools",
+  "tools": [
+    {
+      "name": "run_query",
+      "description": "Execute a SQL query",
+      "parameters": [
+        {
+          "name": "query",
+          "type": "string",
+          "description": "SQL query to execute",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "list_tables",
+      "description": "List all database tables",
+      "parameters": []
+    }
+  ],
+  "auth": { "type": "none" }
+}

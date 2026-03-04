@@ -1,0 +1,14 @@
+---
+source: crates/mcplint_cli/tests/snapshot_test.rs
+expression: stdout
+---
+Rule: MG003
+Category: compositional
+Description: Explicit escalation chains: detects tool graphs that form source → amplifier → sink paths enabling data exfiltration or privilege escalation, both within and across servers.
+CWE: CWE-269, CWE-284
+OWASP: A01:2021
+OWASP MCP: MCP02:2025, MCP03:2025
+Rationale: Composing tools across servers can create privilege escalation paths not visible in isolation.
+References: https://cwe.mitre.org/data/definitions/269.html
+
+MG003 performs compositional analysis across all tools in an MCP configuration to identify escalation chains. It classifies each tool as a source (data access), egress (network/send), or sink (write/execute) and detects when the config contains tools forming dangerous combinations. Analysis covers both single-server and cross-server chains — if Server A provides data read, Server B provides network egress, and Server C provides exec, the combined config enables a full attack chain. Templates: T1 (exfiltration: source+egress), T2 (full chain: source+egress+sink), T3 (local destructive: source+sink with exec/eval/write). All applicable templates are reported independently. Remediation: remove unnecessary tool combinations, add explicit authorization between tool invocations, restrict egress, or split configs into separate trust domains.

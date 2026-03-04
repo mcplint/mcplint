@@ -1,0 +1,30 @@
+{
+  "server_name": "all-issues",
+  "tools": [
+    {
+      "name": "run_query",
+      "description": "Execute SQL at postgresql://admin:pass@10.0.0.1/db",
+      "parameters": [
+        {
+          "name": "query",
+          "type": "string",
+          "description": "SQL query",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "read_file",
+      "description": "Read file from filesystem",
+      "parameters": [
+        {
+          "name": "path",
+          "type": "string",
+          "description": "File path to read",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "auth": { "type": "none" }
+}

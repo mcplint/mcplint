@@ -1,0 +1,104 @@
+name: Test Action
+on: [pull_request]
+
+jobs:
+  test-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      # Test 1: basic scan with text output
+      - uses: ./.github/action
+        id: scan-text
+        with:
+          path: tests/fixtures/claude_desktop/unsafe/claude_desktop_config.json
+          format: text
+          fail-on: critical
+          upload-sarif: 'false'
+
+      - name: Verify scan outputs
+        shell: bash
+        run: |
+          echo "Exit code: ${{ steps.scan-text.outputs.exit-code }}"
+          echo "Findings: ${{ steps.scan-text.outputs.findings-count }}"
+
+      # Test 2: scan with SARIF and upload
+      - uses: ./.github/action
+        id: scan-sarif
+        with:
+          path: tests/fixtures/claude_desktop/unsafe/claude_desktop_config.json
+          format: sarif
+          fail-on: critical
+          upload-sarif: 'true'
+        continue-on-error: true
+
+      # Test 3: scan and save baseline
+      - uses: ./.github/action
+        id: scan-baseline
+        with:
+          path: tests/fixtures/claude_desktop/unsafe/claude_desktop_config.json
+          format: text
+          fail-on: critical
+          save-baseline: /tmp/test-baseline.json
+          upload-sarif: 'false'
+
+      - name: Verify baseline was saved
+        shell: bash
+        run: |
+          test -f /tmp/test-baseline.json
+          echo "Baseline saved successfully"
+
+  test-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Create a baseline first
+      - uses: ./.github/action
+        with:
+          path: tests/fixtures/claude_desktop/unsafe/claude_desktop_config.json
+          format: text
+          fail-on: critical
+          save-baseline: /tmp/diff-baseline.json
+          upload-sarif: 'false'
+
+      # Test 4: diff mode against same config (should be 0 new)
+      - uses: ./.github/action
+        id: diff-same
+        with:
+          mode: diff
+          path: tests/fixtures/claude_desktop/unsafe/claude_desktop_config.json
+          baseline: /tmp/diff-baseline.json
+          fail-on-new: low
+          upload-sarif: 'false'
+
+      - name: Verify diff outputs
+        shell: bash
+        run: |
+          echo "New: ${{ steps.diff-same.outputs.new-findings-count }}"
+          echo "Resolved: ${{ steps.diff-same.outputs.resolved-findings-count }}"
+          test "${{ steps.diff-same.outputs.exit-code }}" = "0"
+
+  test-cache:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # First run — should install
+      - uses: ./.github/action
+        with:
+          path: tests/fixtures/claude_desktop/unsafe/claude_desktop_config.json
+          format: text
+          fail-on: critical
+          upload-sarif: 'false'
+
+      # Second run — should use cache
+      - uses: ./.github/action
+        with:
+          path: tests/fixtures/claude_desktop/unsafe/claude_desktop_config.json
+          format: text
+          fail-on: critical
+          upload-sarif: 'false'

@@ -1,0 +1,18 @@
+{
+  "server_name": "db-tools",
+  "tools": [
+    {
+      "name": "run_query",
+      "description": "Execute a SQL query against the database",
+      "parameters": [
+        {
+          "name": "query",
+          "type": "string",
+          "description": "SQL query to execute",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "auth": { "type": "none" }
+}

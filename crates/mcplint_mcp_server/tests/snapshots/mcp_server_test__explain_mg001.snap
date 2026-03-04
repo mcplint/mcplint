@@ -1,0 +1,26 @@
+---
+source: crates/mcplint_mcp_server/tests/mcp_server_test.rs
+expression: detail
+---
+{
+  "category": "static",
+  "cwe_ids": [
+    "CWE-77",
+    "CWE-89",
+    "CWE-78"
+  ],
+  "description": "Unbounded string to dangerous sink: free-form string inputs flowing into exec, SQL, filesystem, HTTP, or eval-like behavior without constraints.",
+  "id": "MG001",
+  "owasp_ids": [
+    "A03:2021"
+  ],
+  "owasp_mcp_ids": [
+    "MCP05:2025",
+    "MCP06:2025"
+  ],
+  "rationale": "Unbounded string parameters flowing to execution sinks enable injection attacks.",
+  "references": [
+    "https://cwe.mitre.org/data/definitions/77.html",
+    "https://owasp.org/Top10/A03_2021-Injection/"
+  ]
+}

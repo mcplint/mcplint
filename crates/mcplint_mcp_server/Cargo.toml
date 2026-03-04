@@ -1,0 +1,32 @@
+[package]
+name = "mcplint_mcp_server"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "MCP server that exposes mcplint scanning as tools for AI agents"
+readme = "../../README.md"
+keywords = ["mcp", "security", "linter", "model-context-protocol", "mcp-server"]
+categories = ["command-line-utilities", "development-tools"]
+publish = false
+
+[dependencies]
+mcplint_core = { path = "../mcplint_core", version = "0.1.0" }
+mcplint_rules = { path = "../mcplint_rules", version = "0.1.0" }
+mcplint_report = { path = "../mcplint_report", version = "0.1.0" }
+rmcp = { version = "0.16", features = ["server", "client", "transport-io", "transport-child-process", "transport-streamable-http-client-reqwest"] }
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+[dev-dependencies]
+tempfile = "3"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+mcplint_core = { path = "../mcplint_core", version = "0.1.0" }
+mcplint_rules = { path = "../mcplint_rules", version = "0.1.0" }
+insta = { version = "1", features = ["json"] }
+serde_json = "1"

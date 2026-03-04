@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "safe-server": {
+      "command": "node",
+      "args": ["server.js"],
+      "env": {
+        "NODE_ENV": "production",
+        "PORT": "3000",
+        "LOG_LEVEL": "debug",
+        "RUST_LOG": "info"
+      }
+    }
+  }
+}

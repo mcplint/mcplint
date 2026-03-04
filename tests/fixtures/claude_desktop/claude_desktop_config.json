@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/home/user/documents"]
+    },
+    "postgres-db": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "env": {
+        "POSTGRES_CONNECTION_STRING": "postgresql://admin:secret123@10.0.1.5:5432/production"
+      }
+    },
+    "custom-api": {
+      "command": "node",
+      "args": ["/opt/mcp-servers/custom-api/index.js"],
+      "env": {
+        "API_KEY": "sk-live-abc123def456",
+        "BASE_URL": "http://192.168.1.100:3000"
+      }
+    }
+  }
+}

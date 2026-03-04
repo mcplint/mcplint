@@ -1,0 +1,44 @@
+{
+  "servers": [
+    {
+      "name": "data-server",
+      "tools": [
+        {
+          "name": "read_database",
+          "description": "Read records from the production database",
+          "parameters": [
+            { "name": "table", "type": "string", "required": true }
+          ]
+        }
+      ],
+      "auth": { "type": "api_key", "header": "X-Data-Key" }
+    },
+    {
+      "name": "network-server",
+      "tools": [
+        {
+          "name": "http_request",
+          "description": "Send an HTTP request to any URL",
+          "parameters": [
+            { "name": "url", "type": "string", "required": true },
+            { "name": "body", "type": "string" }
+          ]
+        }
+      ],
+      "auth": { "type": "none" }
+    },
+    {
+      "name": "exec-server",
+      "tools": [
+        {
+          "name": "execute_command",
+          "description": "Execute a shell command on the host",
+          "parameters": [
+            { "name": "command", "type": "string", "required": true }
+          ]
+        }
+      ],
+      "auth": { "type": "none" }
+    }
+  ]
+}

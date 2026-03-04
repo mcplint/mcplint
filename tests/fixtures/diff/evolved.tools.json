@@ -1,0 +1,52 @@
+{
+  "server_name": "data-api",
+  "auth": {
+    "type": "bearer",
+    "token": "prod-token-123"
+  },
+  "tools": [
+    {
+      "name": "run_query",
+      "description": "Execute a SQL query against the database",
+      "parameters": [
+        {
+          "name": "sql",
+          "type": "string",
+          "description": "SQL query to execute",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "search",
+      "description": "Search documents",
+      "parameters": [
+        {
+          "name": "query",
+          "type": "string",
+          "description": "Search query",
+          "required": true,
+          "maxLength": 200
+        }
+      ]
+    },
+    {
+      "name": "delete_records",
+      "description": "Delete records from the database",
+      "parameters": [
+        {
+          "name": "table",
+          "type": "string",
+          "description": "Table name to delete from",
+          "required": true
+        },
+        {
+          "name": "condition",
+          "type": "string",
+          "description": "SQL WHERE condition for deletion",
+          "required": true
+        }
+      ]
+    }
+  ]
+}

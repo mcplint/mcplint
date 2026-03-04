@@ -1,0 +1,40 @@
+{
+  "servers": [
+    {
+      "name": "file-server",
+      "tools": [
+        {
+          "name": "read_file",
+          "description": "Read a file from disk",
+          "parameters": [
+            {
+              "name": "path",
+              "type": "string",
+              "description": "File path to read",
+              "required": true
+            }
+          ]
+        }
+      ],
+      "auth": { "type": "none" }
+    },
+    {
+      "name": "exec-server",
+      "tools": [
+        {
+          "name": "run_command",
+          "description": "Execute a shell command",
+          "parameters": [
+            {
+              "name": "cmd",
+              "type": "string",
+              "description": "Command to run",
+              "required": true
+            }
+          ]
+        }
+      ],
+      "auth": { "type": "none" }
+    }
+  ]
+}

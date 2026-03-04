@@ -1,0 +1,39 @@
+---
+source: crates/mcplint_mcp_server/tests/mcp_server_test.rs
+expression: summary
+---
+[
+  {
+    "cwe_ids": [
+      "CWE-77",
+      "CWE-89",
+      "CWE-78"
+    ],
+    "id": "MG001",
+    "owasp_ids": [
+      "A03:2021"
+    ],
+    "owasp_mcp_ids": [
+      "MCP05:2025",
+      "MCP06:2025"
+    ],
+    "severity": "high",
+    "title": "Unbounded string 'command' flows to dangerous sink in tool 'run_command'"
+  },
+  {
+    "cwe_ids": [
+      "CWE-306",
+      "CWE-287"
+    ],
+    "id": "MG005",
+    "owasp_ids": [
+      "A07:2021"
+    ],
+    "owasp_mcp_ids": [
+      "MCP01:2025",
+      "MCP07:2025"
+    ],
+    "severity": "high",
+    "title": "No authentication configured for server 'unsafe-server'"
+  }
+]

@@ -1,0 +1,14 @@
+id: "TEST001"
+title: "All servers must have authentication"
+description: "MCP servers without authentication allow unauthorized access."
+severity: high
+confidence: high
+category: static
+rationale: "Unauthenticated servers are exposed to anyone on the network."
+remediation: "Add OAuth, bearer, or API key authentication to all servers."
+exploit_scenario: "An attacker discovers the MCP server endpoint and accesses all tools without credentials."
+cwe_ids: ["CWE-306"]
+owasp_ids: ["A07:2021"]
+match:
+  server:
+    auth: "none"

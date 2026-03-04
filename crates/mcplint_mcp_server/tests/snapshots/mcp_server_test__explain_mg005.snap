@@ -1,0 +1,24 @@
+---
+source: crates/mcplint_mcp_server/tests/mcp_server_test.rs
+expression: detail
+---
+{
+  "category": "static",
+  "cwe_ids": [
+    "CWE-306",
+    "CWE-287"
+  ],
+  "description": "Missing or weak authentication model: unauthenticated access, shared secrets, or environment-wide trust.",
+  "id": "MG005",
+  "owasp_ids": [
+    "A07:2021"
+  ],
+  "owasp_mcp_ids": [
+    "MCP01:2025",
+    "MCP07:2025"
+  ],
+  "rationale": "MCP servers without authentication allow unauthorized access to tool capabilities.",
+  "references": [
+    "https://cwe.mitre.org/data/definitions/306.html"
+  ]
+}

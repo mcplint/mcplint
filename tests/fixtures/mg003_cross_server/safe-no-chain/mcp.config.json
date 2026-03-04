@@ -1,0 +1,33 @@
+{
+  "servers": [
+    {
+      "name": "analytics",
+      "tools": [
+        {
+          "name": "view_dashboard",
+          "description": "View analytics dashboard metrics",
+          "parameters": []
+        },
+        {
+          "name": "list_reports",
+          "description": "List available reports",
+          "parameters": []
+        }
+      ],
+      "auth": { "type": "api_key", "header": "X-Analytics-Key" }
+    },
+    {
+      "name": "docs",
+      "tools": [
+        {
+          "name": "search_docs",
+          "description": "Search documentation index",
+          "parameters": [
+            { "name": "query", "type": "string", "required": true }
+          ]
+        }
+      ],
+      "auth": { "type": "api_key", "header": "X-Docs-Key" }
+    }
+  ]
+}

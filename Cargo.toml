@@ -1,0 +1,19 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/mcplint_cli",
+    "crates/mcplint_core",
+    "crates/mcplint_rules",
+    "crates/mcplint_report",
+    "crates/mcplint_mcp_server",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+license = "Apache-2.0"
+repository = "https://github.com/mcplint/mcplint"
+homepage = "https://github.com/mcplint/mcplint"
+keywords = ["mcp", "security", "linter", "static-analysis", "model-context-protocol"]
+categories = ["command-line-utilities", "development-tools"]

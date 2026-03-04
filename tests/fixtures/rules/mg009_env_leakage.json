@@ -1,0 +1,19 @@
+{
+  "servers": [
+    {
+      "name": "api-server",
+      "description": "Main API server",
+      "tools": [],
+      "auth": { "type": "bearer", "token_source": "env" },
+      "transport": "stdio",
+      "env": {
+        "OPENAI_API_KEY": "test-key-not-real-1234567890abcdef1234567890abcdef",
+        "SECRET_TOKEN": "$SECRET_TOKEN",
+        "DATABASE_URL": "postgres://admin:pass@db.internal:5432/prod",
+        "PATH": "/usr/bin:/usr/local/bin",
+        "NODE_ENV": "production",
+        "AWS_SECRET_ACCESS_KEY": "wJalrXUtnFEMI/EXAMPLE/bPxRfiCY"
+      }
+    }
+  ]
+}

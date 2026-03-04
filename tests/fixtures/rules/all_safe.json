@@ -1,0 +1,60 @@
+{
+  "servers": [
+    {
+      "name": "safe-server",
+      "description": "A safe server with proper configuration",
+      "tools": [
+        {
+          "name": "get_weather",
+          "description": "Returns current weather for a city",
+          "parameters": [
+            {
+              "name": "city",
+              "type": "string",
+              "description": "City name",
+              "required": true,
+              "constraints": {
+                "maxLength": 100
+              }
+            }
+          ]
+        },
+        {
+          "name": "list_items",
+          "description": "List items with pagination",
+          "parameters": [
+            {
+              "name": "page",
+              "type": "number",
+              "description": "Page number",
+              "required": false,
+              "constraints": {
+                "minimum": 1,
+                "maximum": 1000
+              }
+            },
+            {
+              "name": "category",
+              "type": "string",
+              "description": "Category filter",
+              "required": false,
+              "constraints": {
+                "enum": ["books", "movies", "music"]
+              }
+            }
+          ]
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "token_source": "${API_TOKEN}"
+      },
+      "transport": "https",
+      "url": "https://api.example.com/v1",
+      "env": {
+        "NODE_ENV": "production",
+        "PORT": "3000"
+      }
+    }
+  ]
+}

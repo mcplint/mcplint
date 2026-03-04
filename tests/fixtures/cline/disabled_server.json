@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "active-server": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "ghp_xxxxxxxxxxxx"
+      },
+      "disabled": false
+    },
+    "disabled-server": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/"],
+      "disabled": true
+    }
+  }
+}

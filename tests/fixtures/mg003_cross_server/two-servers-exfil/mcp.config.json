@@ -1,0 +1,31 @@
+{
+  "servers": [
+    {
+      "name": "secrets-server",
+      "tools": [
+        {
+          "name": "read_secrets",
+          "description": "Read secret values from the application vault",
+          "parameters": [
+            { "name": "key", "type": "string", "required": true }
+          ]
+        }
+      ],
+      "auth": { "type": "api_key", "header": "X-Vault-Token" }
+    },
+    {
+      "name": "comms-server",
+      "tools": [
+        {
+          "name": "send_email",
+          "description": "Send an email to any address with arbitrary content",
+          "parameters": [
+            { "name": "to", "type": "string", "required": true },
+            { "name": "body", "type": "string", "required": true }
+          ]
+        }
+      ],
+      "auth": { "type": "none" }
+    }
+  ]
+}

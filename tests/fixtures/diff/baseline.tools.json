@@ -1,0 +1,42 @@
+{
+  "server_name": "data-api",
+  "tools": [
+    {
+      "name": "run_query",
+      "description": "Execute a SQL query against the database",
+      "parameters": [
+        {
+          "name": "sql",
+          "type": "string",
+          "description": "SQL query to execute",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "read_file",
+      "description": "Read a file from the filesystem",
+      "parameters": [
+        {
+          "name": "path",
+          "type": "string",
+          "description": "File path to read",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "search",
+      "description": "Search documents",
+      "parameters": [
+        {
+          "name": "query",
+          "type": "string",
+          "description": "Search query",
+          "required": true,
+          "maxLength": 200
+        }
+      ]
+    }
+  ]
+}

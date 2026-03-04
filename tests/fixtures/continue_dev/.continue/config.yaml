@@ -1,0 +1,7 @@
+mcpServers:
+  - name: inline-server
+    command: node
+    args:
+      - server.js
+    env:
+      PORT: "3000"

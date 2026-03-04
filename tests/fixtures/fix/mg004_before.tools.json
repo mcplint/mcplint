@@ -1,0 +1,18 @@
+{
+  "server_name": "fs-tools",
+  "tools": [
+    {
+      "name": "read_file",
+      "description": "Read the complete contents of a file from the file system",
+      "parameters": [
+        {
+          "name": "path",
+          "type": "string",
+          "description": "Path to the file to read",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "auth": { "type": "none" }
+}

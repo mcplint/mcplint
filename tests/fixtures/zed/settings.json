@@ -1,0 +1,21 @@
+{
+  "theme": "One Dark",
+  "buffer_font_size": 14,
+  "context_servers": {
+    "filesystem": {
+      "command": {
+        "path": "npx",
+        "args": ["-y", "@modelcontextprotocol/server-filesystem", "/tmp"],
+        "env": {}
+      }
+    },
+    "github": {
+      "source": "custom",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "ghp_test1234abcdef"
+      }
+    }
+  }
+}

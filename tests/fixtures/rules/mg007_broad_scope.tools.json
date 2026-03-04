@@ -1,0 +1,74 @@
+{
+  "server_name": "broad-scope-server",
+  "tools": [
+    {
+      "name": "process_data",
+      "description": "Process arbitrary data payload",
+      "parameters": [
+        {
+          "name": "payload",
+          "type": "object",
+          "description": "Data to process",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "batch_items",
+      "description": "Process a batch of items",
+      "parameters": [
+        {
+          "name": "items",
+          "type": "array",
+          "description": "Items to process",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "get_info",
+      "description": "Get information by name",
+      "parameters": [
+        {
+          "name": "name",
+          "type": "string",
+          "description": "Name to look up",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "lookup",
+      "description": "Search and query items from the database",
+      "parameters": []
+    },
+    {
+      "name": "transform",
+      "description": "Transform data",
+      "parameters": [
+        {
+          "name": "input",
+          "type": "",
+          "description": "Input data",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "get_status",
+      "description": "Returns current system status",
+      "parameters": [
+        {
+          "name": "format",
+          "type": "string",
+          "description": "Output format",
+          "required": false,
+          "constraints": {
+            "enum": ["json", "text", "csv"]
+          }
+        }
+      ]
+    }
+  ],
+  "auth": { "type": "none" }
+}

@@ -1,0 +1,35 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/"]
+    },
+    "postgres": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "env": {
+        "POSTGRES_CONNECTION_STRING": "postgresql://admin:REDACTED@localhost:5432/production",
+        "DB_PASSWORD": "REDACTED"
+      }
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "REDACTED"
+      }
+    },
+    "shell": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-shell"]
+    },
+    "internal-api": {
+      "command": "node",
+      "args": ["/opt/mcp-servers/internal-api/index.js"],
+      "env": {
+        "API_SECRET": "REDACTED",
+        "BASE_URL": "http://localhost:9090"
+      }
+    }
+  }
+}

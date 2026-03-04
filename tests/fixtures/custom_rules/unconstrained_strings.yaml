@@ -1,0 +1,11 @@
+id: "TEST004"
+title: "String parameters must have constraints"
+description: "All string parameters should have maxLength, enum, or pattern constraints."
+severity: medium
+confidence: medium
+category: static
+remediation: "Add maxLength, enum, or pattern constraint to the parameter."
+match:
+  parameter:
+    type: "string"
+    unconstrained: true

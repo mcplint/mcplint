@@ -1,0 +1,30 @@
+{
+  "server_name": "safe-tools",
+  "tools": [
+    {
+      "name": "run_query",
+      "description": "Execute a safe SQL query",
+      "parameters": [
+        {
+          "name": "query",
+          "type": "string",
+          "required": true,
+          "maxLength": 1000
+        }
+      ]
+    },
+    {
+      "name": "read_file",
+      "description": "Read a file safely",
+      "parameters": [
+        {
+          "name": "path",
+          "type": "string",
+          "required": true,
+          "allowedDirectories": ["."]
+        }
+      ]
+    }
+  ],
+  "auth": { "type": "bearer", "token_source": "env:API_TOKEN" }
+}

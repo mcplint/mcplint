@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "dangerous-server": {
+      "command": "node",
+      "args": ["server.js"],
+      "env": {
+        "SECRET_KEY": "sk-live-abc123def456",
+        "INTERNAL_API": "http://10.0.1.50:8080/v1",
+        "DATABASE_URL": "postgres://admin:pass@db.internal:5432/prod"
+      }
+    }
+  }
+}

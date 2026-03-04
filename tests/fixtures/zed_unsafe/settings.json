@@ -1,0 +1,22 @@
+{
+  "context_servers": {
+    "exec-tool": {
+      "command": {
+        "path": "node",
+        "args": ["exec-server.js"],
+        "env": {
+          "SECRET_KEY": "sk-live-abc123def456",
+          "INTERNAL_API": "http://prod-api.internal:8080/v1"
+        }
+      }
+    },
+    "db-tool": {
+      "source": "custom",
+      "command": "npx",
+      "args": ["-y", "mcp-postgres"],
+      "env": {
+        "DATABASE_URL": "postgres://admin:password@db.internal:5432/prod"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+id: "TEST003"
+title: "Production servers must use HTTPS"
+description: "Production MCP servers must use encrypted transport."
+severity: high
+confidence: high
+category: static
+remediation: "Change server URL to use https:// or wss://."
+match:
+  server:
+    name: "prod-*|production-*"
+    url: "http://*"

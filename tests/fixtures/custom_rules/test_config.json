@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "prod-api": {
+      "command": "node",
+      "args": ["server.js"],
+      "env": {
+        "DATABASE_URL": "postgres://admin:secret@db.internal:5432/prod"
+      }
+    },
+    "dev-tools": {
+      "command": "npx",
+      "args": ["-y", "exec-server"],
+      "env": {}
+    }
+  }
+}

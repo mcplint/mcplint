@@ -1,0 +1,147 @@
+---
+source: crates/mcplint_mcp_server/tests/mcp_server_test.rs
+expression: rules
+---
+[
+  {
+    "category": "static",
+    "cwe_ids": [
+      "CWE-77",
+      "CWE-89",
+      "CWE-78"
+    ],
+    "description": "Unbounded string to dangerous sink: free-form string inputs flowing into exec, SQL, filesystem, HTTP, or eval-like behavior without constraints.",
+    "id": "MG001",
+    "owasp_ids": [
+      "A03:2021"
+    ],
+    "owasp_mcp_ids": [
+      "MCP05:2025",
+      "MCP06:2025"
+    ]
+  },
+  {
+    "category": "semantic",
+    "cwe_ids": [
+      "CWE-285"
+    ],
+    "description": "Semantic over-permissioning: tool intent described as limited, but name/args imply broader capability.",
+    "id": "MG002",
+    "owasp_ids": [
+      "A01:2021"
+    ],
+    "owasp_mcp_ids": [
+      "MCP02:2025"
+    ]
+  },
+  {
+    "category": "compositional",
+    "cwe_ids": [
+      "CWE-269",
+      "CWE-284"
+    ],
+    "description": "Explicit escalation chains: detects tool graphs that form source → amplifier → sink paths enabling data exfiltration or privilege escalation, both within and across servers.",
+    "id": "MG003",
+    "owasp_ids": [
+      "A01:2021"
+    ],
+    "owasp_mcp_ids": [
+      "MCP02:2025",
+      "MCP03:2025"
+    ]
+  },
+  {
+    "category": "static",
+    "cwe_ids": [
+      "CWE-22",
+      "CWE-73"
+    ],
+    "description": "Filesystem scope violations: arbitrary path access, globbing, or write access without confinement.",
+    "id": "MG004",
+    "owasp_ids": [
+      "A01:2021"
+    ],
+    "owasp_mcp_ids": [
+      "MCP05:2025",
+      "MCP10:2025"
+    ]
+  },
+  {
+    "category": "static",
+    "cwe_ids": [
+      "CWE-306",
+      "CWE-287"
+    ],
+    "description": "Missing or weak authentication model: unauthenticated access, shared secrets, or environment-wide trust.",
+    "id": "MG005",
+    "owasp_ids": [
+      "A07:2021"
+    ],
+    "owasp_mcp_ids": [
+      "MCP01:2025",
+      "MCP07:2025"
+    ]
+  },
+  {
+    "category": "static",
+    "cwe_ids": [
+      "CWE-200",
+      "CWE-538"
+    ],
+    "description": "Sensitive metadata leakage: tool descriptions, error messages, or schemas exposing internal paths, table names, infrastructure details, or sensitive identifiers.",
+    "id": "MG006",
+    "owasp_ids": [
+      "A01:2021"
+    ],
+    "owasp_mcp_ids": [
+      "MCP01:2025",
+      "MCP10:2025"
+    ]
+  },
+  {
+    "category": "static",
+    "cwe_ids": [
+      "CWE-20"
+    ],
+    "description": "Overly broad tool parameter scopes: unconstrained types, missing type definitions, or excessively permissive parameter schemas that accept arbitrary data.",
+    "id": "MG007",
+    "owasp_ids": [
+      "A03:2021"
+    ],
+    "owasp_mcp_ids": [
+      "MCP02:2025",
+      "MCP05:2025"
+    ]
+  },
+  {
+    "category": "static",
+    "cwe_ids": [
+      "CWE-319"
+    ],
+    "description": "Insecure transport: MCP servers configured with unencrypted HTTP or WebSocket connections, exposing tool calls and responses to network interception.",
+    "id": "MG008",
+    "owasp_ids": [
+      "A02:2021"
+    ],
+    "owasp_mcp_ids": [
+      "MCP01:2025",
+      "MCP07:2025"
+    ]
+  },
+  {
+    "category": "static",
+    "cwe_ids": [
+      "CWE-798",
+      "CWE-522"
+    ],
+    "description": "Sensitive environment variables passed to MCP servers: API keys, database passwords, tokens, and other secrets exposed to potentially untrusted server code.",
+    "id": "MG009",
+    "owasp_ids": [
+      "A07:2021"
+    ],
+    "owasp_mcp_ids": [
+      "MCP01:2025",
+      "MCP09:2025"
+    ]
+  }
+]

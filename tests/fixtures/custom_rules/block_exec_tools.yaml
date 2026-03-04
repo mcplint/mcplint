@@ -1,0 +1,10 @@
+id: "TEST002"
+title: "Execution tools are forbidden"
+description: "Tools that execute commands are not allowed in this organization."
+severity: critical
+confidence: high
+category: static
+remediation: "Remove exec/shell/command tools from the MCP configuration."
+match:
+  tool:
+    name: "exec_*|run_*|shell_*|command_*"

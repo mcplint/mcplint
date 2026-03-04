@@ -1,0 +1,14 @@
+# Test config: ignore MG006, suppress MG005 for filesystem server,
+# and downgrade MG003 to medium.
+
+fail_on = "critical"
+default_format = "json"
+
+[ignore]
+rules = ["MG006"]
+findings = [
+  { rule = "MG005", server = "filesystem", reason = "sandboxed container path only" },
+]
+
+[severity_overrides]
+MG003 = "medium"

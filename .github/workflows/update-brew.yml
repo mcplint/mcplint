@@ -1,0 +1,51 @@
+name: Update Homebrew Tap
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  update-tap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get version
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Download checksums
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          BASE="https://github.com/mcplint/mcplint/releases/download/v${VERSION}"
+          for target in x86_64-apple-darwin aarch64-apple-darwin x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu; do
+            curl -fsSL "${BASE}/mcplint-${target}.tar.gz.sha256" -o "${target}.sha256"
+          done
+
+      - name: Generate formula
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          SHA_X86_DARWIN=$(awk '{print $1}' x86_64-apple-darwin.sha256)
+          SHA_ARM_DARWIN=$(awk '{print $1}' aarch64-apple-darwin.sha256)
+          SHA_X86_LINUX=$(awk '{print $1}' x86_64-unknown-linux-gnu.sha256)
+          SHA_ARM_LINUX=$(awk '{print $1}' aarch64-unknown-linux-gnu.sha256)
+
+          sed -e "s/{{VERSION}}/${VERSION}/g" \
+              -e "s/{{SHA256_X86_64_DARWIN}}/${SHA_X86_DARWIN}/g" \
+              -e "s/{{SHA256_AARCH64_DARWIN}}/${SHA_ARM_DARWIN}/g" \
+              -e "s/{{SHA256_X86_64_LINUX}}/${SHA_X86_LINUX}/g" \
+              -e "s/{{SHA256_AARCH64_LINUX}}/${SHA_ARM_LINUX}/g" \
+              .github/brew/mcplint.rb.template > mcplint.rb
+
+      - name: Push to tap repo
+        uses: cpina/github-action-push-to-another-repository@v1.7.2
+        with:
+          source-directory: '.'
+          destination-github-username: 'mcplint'
+          destination-repository-name: 'homebrew-tap'
+          target-directory: 'Formula'
+          target-branch: main
+          user-name: 'mcplint-bot'
+          user-email: 'bot@mcplint.dev'
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.TAP_REPO_TOKEN }}

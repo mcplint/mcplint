@@ -1,0 +1,16 @@
+{
+  // Editor settings
+  "theme": "One Dark",
+  "buffer_font_size": 14,
+  /* MCP server configuration */
+  "context_servers": {
+    // Filesystem access
+    "filesystem": {
+      "command": {
+        "path": "npx",
+        "args": ["-y", "@modelcontextprotocol/server-filesystem", "/tmp"],
+        "env": {}
+      }
+    }
+  }
+}

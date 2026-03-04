@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "shell-runner": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-shell"]
+    },
+    "fetch-server": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"],
+      "env": {
+        "AUTH_TOKEN": "ghp_xxxxxxxxxxxx"
+      }
+    }
+  }
+}

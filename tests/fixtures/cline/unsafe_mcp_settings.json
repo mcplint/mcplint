@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/"],
+      "disabled": false,
+      "alwaysAllow": ["read_file", "write_file", "list_directory"]
+    },
+    "shell": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-shell"],
+      "disabled": false,
+      "alwaysAllow": ["run_command"]
+    }
+  }
+}

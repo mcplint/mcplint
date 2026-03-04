@@ -1,0 +1,82 @@
+# mcplint — MCP security scanner for CI
+#
+# Scans MCP configurations for security issues and uploads findings
+# to GitHub Code Scanning via SARIF. Findings appear as annotations on PRs.
+#
+# Configuration:
+#   MCP_SCAN_PATH: path to scan (default: repository root ".")
+#   FAIL_ON: minimum severity to fail the build (default: "high")
+
+name: mcplint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  CARGO_TERM_COLOR: always
+  MCP_SCAN_PATH: ${{ vars.MCP_SCAN_PATH || '.' }}
+  FAIL_ON: ${{ vars.FAIL_ON || 'high' }}
+
+jobs:
+  mcplint:
+    name: MCP Security Scan
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write   # required for upload-sarif
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo registry & build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
+
+      - name: Build mcplint
+        run: cargo build --release --locked
+
+      - name: Run mcplint scan (SARIF)
+        run: |
+          ./target/release/mcplint scan "$MCP_SCAN_PATH" \
+            --format sarif \
+            --fail-on "$FAIL_ON" \
+            > mcplint-results.sarif 2>mcplint-stderr.txt || true
+          cat mcplint-stderr.txt >&2
+          # Ensure valid SARIF even when scan finds no MCP configs
+          if [ ! -s mcplint-results.sarif ]; then
+            echo '{"version":"2.1.0","$schema":"https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/sarif-2.1/schema/sarif-schema-2.1.0.json","runs":[{"tool":{"driver":{"name":"mcplint","version":"0.0.0","rules":[]}},"results":[]}]}' > mcplint-results.sarif
+          fi
+
+      - name: Upload SARIF to GitHub Code Scanning
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: mcplint-results.sarif
+          category: mcplint
+
+      - name: Fail on findings
+        run: |
+          ./target/release/mcplint scan "$MCP_SCAN_PATH" \
+            --format text \
+            --fail-on "$FAIL_ON" || {
+            rc=$?
+            # Exit code 1 from scan = no MCP config found (not a finding failure)
+            # Only propagate if actual findings triggered the failure
+            if [ -s mcplint-results.sarif ] && grep -q '"results":\[\]' mcplint-results.sarif 2>/dev/null; then
+              echo "No MCP configurations found to scan — skipping."
+              exit 0
+            fi
+            exit $rc
+          }

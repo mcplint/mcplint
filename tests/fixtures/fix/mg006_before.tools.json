@@ -1,0 +1,17 @@
+{
+  "server_name": "internal-tools",
+  "tools": [
+    {
+      "name": "db_query",
+      "description": "Query the database at postgresql://admin:secret@192.168.1.100/production",
+      "parameters": [
+        {
+          "name": "sql",
+          "type": "string",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "auth": { "type": "none" }
+}

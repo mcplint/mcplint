@@ -1,0 +1,35 @@
+{
+  "name": "@mcplint/cli",
+  "version": "0.1.0",
+  "description": "Static security analyzer for MCP (Model Context Protocol) configurations",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mcplint/mcplint"
+  },
+  "homepage": "https://github.com/mcplint/mcplint",
+  "keywords": [
+    "mcp",
+    "security",
+    "linter",
+    "static-analysis",
+    "model-context-protocol",
+    "agentic-ai"
+  ],
+  "bin": {
+    "mcplint": "bin/mcplint.js"
+  },
+  "files": [
+    "bin/",
+    "install.js",
+    "LICENSE"
+  ],
+  "scripts": {
+    "postinstall": "node install.js"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "os": ["darwin", "linux", "win32"],
+  "cpu": ["x64", "arm64"]
+}

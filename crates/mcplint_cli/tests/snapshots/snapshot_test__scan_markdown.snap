@@ -1,0 +1,406 @@
+---
+source: crates/mcplint_cli/tests/snapshot_test.rs
+expression: normalized
+---
+# mcplint Scan Report
+
+**Source:** `fixtures/vulnerable.tools.json`
+
+## Summary
+
+| Severity | Count |
+|----------|-------|
+| 🔴 Critical | 2 |
+| 🟠 High | 9 |
+| 🟡 Medium | 6 |
+| 🔵 Low | 0 |
+| **Total** | **17** |
+
+## Findings
+
+### 🔴 [MG003] Full escalation chain detected (single-server)
+
+**Severity:** critical | **Confidence:** medium | **Category:** compositional
+
+The MCP configuration contains a complete source → egress → sink escalation chain across single-server tools. Sources: [vulnerable-server/run_query, vulnerable-server/read_file, vulnerable-server/http_fetch]. Egress: [vulnerable-server/http_fetch]. Sinks: [vulnerable-server/run_query, vulnerable-server/execute_command, vulnerable-server/write_file]. This combination allows data to be read, exfiltrated over the network, and used for arbitrary writes or command execution.
+
+**Exploit Scenario:** An attacker chains: (1) use source tool(s) [vulnerable-server/run_query, vulnerable-server/read_file, vulnerable-server/http_fetch] to access sensitive data, (2) use egress tool(s) [vulnerable-server/http_fetch] to exfiltrate data to an external server, (3) use sink tool(s) [vulnerable-server/run_query, vulnerable-server/execute_command, vulnerable-server/write_file] to write, execute, or deploy malicious payloads — achieving full data exfiltration and code execution.
+
+**Evidence:**
+
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[run_query]`: Source tool 'run_query' on server 'vulnerable-server' (signals: source:query, sink:execute)
+  ```
+  tool=run_query, server=vulnerable-server, role=source, matched_keywords=[source:query, sink:execute]
+  ```
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[read_file]`: Source tool 'read_file' on server 'vulnerable-server' (signals: source:read)
+  ```
+  tool=read_file, server=vulnerable-server, role=source, matched_keywords=[source:read]
+  ```
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[http_fetch]`: Source tool 'http_fetch' on server 'vulnerable-server' (signals: source:fetch, egress:http)
+  ```
+  tool=http_fetch, server=vulnerable-server, role=source, matched_keywords=[source:fetch, egress:http]
+  ```
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[http_fetch]`: Egress tool 'http_fetch' on server 'vulnerable-server' (signals: source:fetch, egress:http)
+  ```
+  tool=http_fetch, server=vulnerable-server, role=egress, matched_keywords=[source:fetch, egress:http]
+  ```
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[run_query]`: Sink tool 'run_query' on server 'vulnerable-server' (signals: source:query, sink:execute)
+  ```
+  tool=run_query, server=vulnerable-server, role=sink, matched_keywords=[source:query, sink:execute]
+  ```
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[execute_command]`: Sink tool 'execute_command' on server 'vulnerable-server' (signals: sink:execute)
+  ```
+  tool=execute_command, server=vulnerable-server, role=sink, matched_keywords=[sink:execute]
+  ```
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[write_file]`: Sink tool 'write_file' on server 'vulnerable-server' (signals: sink:write)
+  ```
+  tool=write_file, server=vulnerable-server, role=sink, matched_keywords=[sink:write]
+  ```
+
+**Remediation:** Break the single-server escalation chain: restrict egress tools to approved destinations, scope source tools to non-sensitive data, remove unnecessary exec/write sinks, add authorization gates between tools, or split into separate configs with distinct trust domains.
+
+---
+
+### 🔴 [MG004] Unconfined filesystem access in tool 'write_file' via parameter 'path'
+
+**Severity:** critical | **Confidence:** high | **Category:** static
+
+Tool 'write_file' (server 'vulnerable-server') accepts an unconstrained path parameter 'path' for filesystem operations. No allowedDirectories, basePath, pattern, or enum constraints are defined, allowing arbitrary filesystem access including writes.
+
+**Exploit Scenario:** An attacker provides a path like '../../etc/passwd' or '/etc/shadow' to parameter 'path' in tool 'write_file', traversing outside any intended directory scope to overwrite or delete sensitive files.
+
+**Evidence:**
+
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[write_file] > parameters[path]`: Unconstrained path parameter 'path' in filesystem tool with no directory scoping
+  ```
+  { "name": "path", "type": "string", "constraints": {} }
+  ```
+
+**Remediation:** Add path constraints to parameter 'path': define 'allowedDirectories' or 'basePath' to confine access to specific directories. Add a 'pattern' constraint to reject path traversal sequences. Consider using a chroot or sandbox for filesystem tools.
+
+---
+
+### 🟠 [MG001] Unbounded string 'command' flows to dangerous sink in tool 'execute_command'
+
+**Severity:** high | **Confidence:** high | **Category:** static
+
+Parameter 'command' in tool 'execute_command' (server 'vulnerable-server') is an unconstrained string that flows to dangerous operation(s): exec, execute, run, shell, command. No enum, pattern, maxLength, or format constraints are defined.
+
+**Exploit Scenario:** An attacker controlling the 'command' parameter can inject malicious content targeting the exec, execute, run, shell, command sink(s). For example, if this is a SQL query parameter, the attacker could execute 'DROP TABLE users; --' or exfiltrate data via UNION-based injection.
+
+**Evidence:**
+
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[execute_command] > parameters[command]`: Unconstrained string parameter 'command' with type 'string' and no validation constraints, in tool with dangerous sink indicators: exec, execute, run, shell, command
+  ```
+  { "name": "command", "type": "string", "constraints": {} }
+  ```
+
+**Remediation:** Add input constraints to parameter 'command': use an enum for known values, a regex pattern for structured input, maxLength to limit size, or a format specifier. Consider parameterized queries for SQL sinks and allowlists for command execution.
+
+---
+
+### 🟠 [MG001] Unbounded string 'content' flows to dangerous sink in tool 'write_file'
+
+**Severity:** high | **Confidence:** high | **Category:** static
+
+Parameter 'content' in tool 'write_file' (server 'vulnerable-server') is an unconstrained string that flows to dangerous operation(s): write. No enum, pattern, maxLength, or format constraints are defined.
+
+**Exploit Scenario:** An attacker controlling the 'content' parameter can inject malicious content targeting the write sink(s). For example, if this is a SQL query parameter, the attacker could execute 'DROP TABLE users; --' or exfiltrate data via UNION-based injection.
+
+**Evidence:**
+
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[write_file] > parameters[content]`: Unconstrained string parameter 'content' with type 'string' and no validation constraints, in tool with dangerous sink indicators: write
+  ```
+  { "name": "content", "type": "string", "constraints": {} }
+  ```
+
+**Remediation:** Add input constraints to parameter 'content': use an enum for known values, a regex pattern for structured input, maxLength to limit size, or a format specifier. Consider parameterized queries for SQL sinks and allowlists for command execution.
+
+---
+
+### 🟠 [MG001] Unbounded string 'path' flows to dangerous sink in tool 'write_file'
+
+**Severity:** high | **Confidence:** high | **Category:** static
+
+Parameter 'path' in tool 'write_file' (server 'vulnerable-server') is an unconstrained string that flows to dangerous operation(s): write. No enum, pattern, maxLength, or format constraints are defined.
+
+**Exploit Scenario:** An attacker controlling the 'path' parameter can inject malicious content targeting the write sink(s). For example, if this is a SQL query parameter, the attacker could execute 'DROP TABLE users; --' or exfiltrate data via UNION-based injection.
+
+**Evidence:**
+
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[write_file] > parameters[path]`: Unconstrained string parameter 'path' with type 'string' and no validation constraints, in tool with dangerous sink indicators: write
+  ```
+  { "name": "path", "type": "string", "constraints": {} }
+  ```
+
+**Remediation:** Add input constraints to parameter 'path': use an enum for known values, a regex pattern for structured input, maxLength to limit size, or a format specifier. Consider parameterized queries for SQL sinks and allowlists for command execution.
+
+---
+
+### 🟠 [MG001] Unbounded string 'query' flows to dangerous sink in tool 'run_query'
+
+**Severity:** high | **Confidence:** high | **Category:** static
+
+Parameter 'query' in tool 'run_query' (server 'vulnerable-server') is an unconstrained string that flows to dangerous operation(s): exec, execute, run, query, sql. No enum, pattern, maxLength, or format constraints are defined.
+
+**Exploit Scenario:** An attacker controlling the 'query' parameter can inject malicious content targeting the exec, execute, run, query, sql sink(s). For example, if this is a SQL query parameter, the attacker could execute 'DROP TABLE users; --' or exfiltrate data via UNION-based injection.
+
+**Evidence:**
+
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[run_query] > parameters[query]`: Unconstrained string parameter 'query' with type 'string' and no validation constraints, in tool with dangerous sink indicators: exec, execute, run, query, sql
+  ```
+  { "name": "query", "type": "string", "constraints": {} }
+  ```
+
+**Remediation:** Add input constraints to parameter 'query': use an enum for known values, a regex pattern for structured input, maxLength to limit size, or a format specifier. Consider parameterized queries for SQL sinks and allowlists for command execution.
+
+---
+
+### 🟠 [MG001] Unbounded string 'url' flows to dangerous sink in tool 'http_fetch'
+
+**Severity:** high | **Confidence:** high | **Category:** static
+
+Parameter 'url' in tool 'http_fetch' (server 'vulnerable-server') is an unconstrained string that flows to dangerous operation(s): fetch, http. No enum, pattern, maxLength, or format constraints are defined.
+
+**Exploit Scenario:** An attacker controlling the 'url' parameter can inject malicious content targeting the fetch, http sink(s). For example, if this is a SQL query parameter, the attacker could execute 'DROP TABLE users; --' or exfiltrate data via UNION-based injection.
+
+**Evidence:**
+
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[http_fetch] > parameters[url]`: Unconstrained string parameter 'url' with type 'string' and no validation constraints, in tool with dangerous sink indicators: fetch, http
+  ```
+  { "name": "url", "type": "string", "constraints": {} }
+  ```
+
+**Remediation:** Add input constraints to parameter 'url': use an enum for known values, a regex pattern for structured input, maxLength to limit size, or a format specifier. Consider parameterized queries for SQL sinks and allowlists for command execution.
+
+---
+
+### 🟠 [MG003] Exfiltration chain detected (single-server)
+
+**Severity:** high | **Confidence:** medium | **Category:** compositional
+
+The MCP configuration contains a single-server source → egress chain. Sources: [vulnerable-server/run_query, vulnerable-server/read_file, vulnerable-server/http_fetch]. Egress: [vulnerable-server/http_fetch]. Data can be read and sent to external destinations without restriction.
+
+**Exploit Scenario:** An attacker uses source tool(s) [vulnerable-server/run_query, vulnerable-server/read_file, vulnerable-server/http_fetch] to access sensitive data, then uses egress tool(s) [vulnerable-server/http_fetch] to send the data to an attacker-controlled server, achieving data exfiltration.
+
+**Evidence:**
+
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[run_query]`: Source tool 'run_query' on server 'vulnerable-server' (signals: source:query, sink:execute)
+  ```
+  tool=run_query, server=vulnerable-server, role=source, matched_keywords=[source:query, sink:execute]
+  ```
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[read_file]`: Source tool 'read_file' on server 'vulnerable-server' (signals: source:read)
+  ```
+  tool=read_file, server=vulnerable-server, role=source, matched_keywords=[source:read]
+  ```
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[http_fetch]`: Source tool 'http_fetch' on server 'vulnerable-server' (signals: source:fetch, egress:http)
+  ```
+  tool=http_fetch, server=vulnerable-server, role=source, matched_keywords=[source:fetch, egress:http]
+  ```
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[http_fetch]`: Egress tool 'http_fetch' on server 'vulnerable-server' (signals: source:fetch, egress:http)
+  ```
+  tool=http_fetch, server=vulnerable-server, role=egress, matched_keywords=[source:fetch, egress:http]
+  ```
+
+**Remediation:** Break the single-server exfiltration chain: restrict egress tools to approved destinations, scope source tools to non-sensitive data, or require user confirmation for network operations.
+
+---
+
+### 🟠 [MG003] Local destructive chain detected (single-server)
+
+**Severity:** high | **Confidence:** medium | **Category:** compositional
+
+The MCP configuration contains a single-server source → sink chain. Sources: [vulnerable-server/run_query, vulnerable-server/read_file, vulnerable-server/http_fetch]. Sinks: [vulnerable-server/run_query, vulnerable-server/execute_command, vulnerable-server/write_file]. Data can be read and used to drive write, execute, or destructive operations.
+
+**Exploit Scenario:** An attacker uses source tool(s) [vulnerable-server/run_query, vulnerable-server/read_file, vulnerable-server/http_fetch] to read sensitive data or configuration, then uses sink tool(s) [vulnerable-server/run_query, vulnerable-server/execute_command, vulnerable-server/write_file] to write malicious files, execute commands, or destroy data.
+
+**Evidence:**
+
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[run_query]`: Source tool 'run_query' on server 'vulnerable-server' (signals: source:query, sink:execute)
+  ```
+  tool=run_query, server=vulnerable-server, role=source, matched_keywords=[source:query, sink:execute]
+  ```
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[read_file]`: Source tool 'read_file' on server 'vulnerable-server' (signals: source:read)
+  ```
+  tool=read_file, server=vulnerable-server, role=source, matched_keywords=[source:read]
+  ```
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[http_fetch]`: Source tool 'http_fetch' on server 'vulnerable-server' (signals: source:fetch, egress:http)
+  ```
+  tool=http_fetch, server=vulnerable-server, role=source, matched_keywords=[source:fetch, egress:http]
+  ```
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[run_query]`: Sink tool 'run_query' on server 'vulnerable-server' (signals: source:query, sink:execute)
+  ```
+  tool=run_query, server=vulnerable-server, role=sink, matched_keywords=[source:query, sink:execute]
+  ```
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[execute_command]`: Sink tool 'execute_command' on server 'vulnerable-server' (signals: sink:execute)
+  ```
+  tool=execute_command, server=vulnerable-server, role=sink, matched_keywords=[sink:execute]
+  ```
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[write_file]`: Sink tool 'write_file' on server 'vulnerable-server' (signals: sink:write)
+  ```
+  tool=write_file, server=vulnerable-server, role=sink, matched_keywords=[sink:write]
+  ```
+
+**Remediation:** Break the single-server destructive chain: scope source tools to non-sensitive data, restrict sink tools to safe operations, add authorization gates, or split into separate configs.
+
+---
+
+### 🟠 [MG004] Unconfined filesystem access in tool 'read_file' via parameter 'path'
+
+**Severity:** high | **Confidence:** high | **Category:** static
+
+Tool 'read_file' (server 'vulnerable-server') accepts an unconstrained path parameter 'path' for filesystem operations. No allowedDirectories, basePath, pattern, or enum constraints are defined, allowing arbitrary filesystem access.
+
+**Exploit Scenario:** An attacker provides a path like '../../etc/passwd' or '/etc/shadow' to parameter 'path' in tool 'read_file', traversing outside any intended directory scope to read sensitive files.
+
+**Evidence:**
+
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[read_file] > parameters[path]`: Unconstrained path parameter 'path' in filesystem tool with no directory scoping
+  ```
+  { "name": "path", "type": "string", "constraints": {} }
+  ```
+
+**Remediation:** Add path constraints to parameter 'path': define 'allowedDirectories' or 'basePath' to confine access to specific directories. Add a 'pattern' constraint to reject path traversal sequences. Consider using a chroot or sandbox for filesystem tools.
+
+---
+
+### 🟠 [MG005] No authentication configured for server 'vulnerable-server'
+
+**Severity:** high | **Confidence:** high | **Category:** static
+
+Server 'vulnerable-server' has no authentication configured (transport: stdio). Any local process can invoke any of its 6 tool(s) without credentials.
+
+**Exploit Scenario:** An attacker with local access gains direct access to server 'vulnerable-server' and invokes sensitive tools without authentication, potentially reading data, executing commands, or modifying state.
+
+**Evidence:**
+
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server].auth`: Authentication is set to 'none' or not configured
+  ```
+  {"type": "none"}
+  ```
+
+**Remediation:** Configure authentication for server 'vulnerable-server'. For network-accessible servers, use OAuth or mutual TLS. For local servers, use API keys with per-client scoping. Avoid shared secrets.
+
+---
+
+### 🟡 [MG002] Over-permissioned tool 'manage_users': description implies limited scope but capabilities are broad
+
+**Severity:** medium | **Confidence:** medium | **Category:** semantic
+
+Tool 'manage_users' (server 'vulnerable-server') description uses limited-intent language (view, list) but its name/parameters contain broad-capability indicators (delete, update, create, manage). This mismatch may hide dangerous operations behind benign descriptions.
+
+**Exploit Scenario:** An LLM or user grants access to 'manage_users' based on its benign description (containing: view, list), without realizing it can also perform dangerous operations implied by: delete, update, create, manage. An attacker exploits this mismatch to escalate privileges through the tool.
+
+**Evidence:**
+
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[manage_users].description`: Description implies limited scope with keywords: view, list
+  ```
+  View and list user records
+  ```
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[manage_users].name/parameters`: Name/parameters imply broad capabilities: delete, update, create, manage
+  ```
+  manage_users
+  ```
+
+**Remediation:** Update the description of tool 'manage_users' to accurately reflect all capabilities including: delete, update, create, manage. Alternatively, split the tool into separate read-only and write/execute tools.
+
+---
+
+### 🟡 [MG002] Over-permissioned tool 'run_query': description implies limited scope but capabilities are broad
+
+**Severity:** medium | **Confidence:** medium | **Category:** semantic
+
+Tool 'run_query' (server 'vulnerable-server') description uses limited-intent language (query) but its name/parameters contain broad-capability indicators (execute, run). This mismatch may hide dangerous operations behind benign descriptions.
+
+**Exploit Scenario:** An LLM or user grants access to 'run_query' based on its benign description (containing: query), without realizing it can also perform dangerous operations implied by: execute, run. An attacker exploits this mismatch to escalate privileges through the tool.
+
+**Evidence:**
+
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[run_query].description`: Description implies limited scope with keywords: query
+  ```
+  Execute a SQL query against the production database
+  ```
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[run_query].name/parameters`: Name/parameters imply broad capabilities: execute, run
+  ```
+  run_query
+  ```
+
+**Remediation:** Update the description of tool 'run_query' to accurately reflect all capabilities including: execute, run. Alternatively, split the tool into separate read-only and write/execute tools.
+
+---
+
+### 🟡 [MG006] Absolute filesystem path leaked in tool 'read_file' description (server 'vulnerable-server')
+
+**Severity:** medium | **Confidence:** high | **Category:** static
+
+Found Absolute filesystem path in tool 'read_file' description: ' /var/data/app/storage'. This reveals internal infrastructure details that can aid attackers in reconnaissance.
+
+**Exploit Scenario:** An attacker reads the MCP tool schema and discovers Absolute filesystem path ' /var/data/app/storage' in tool 'read_file' description. This information reveals internal architecture and can be used to craft targeted attacks against the infrastructure.
+
+**Evidence:**
+
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[read_file].description`: absolute_path pattern 'Absolute filesystem path' matched
+  ```
+   /var/data/app/storage
+  ```
+
+**Remediation:** Remove the Absolute filesystem path from tool 'read_file' description. Use generic descriptions that don't reveal internal infrastructure. Document internal details in separate, non-exposed documentation.
+
+---
+
+### 🟡 [MG006] Internal IP address leaked in tool 'http_fetch' description (server 'vulnerable-server')
+
+**Severity:** medium | **Confidence:** high | **Category:** static
+
+Found Internal IP address in tool 'http_fetch' description: '192.168.1.50'. This reveals internal infrastructure details that can aid attackers in reconnaissance.
+
+**Exploit Scenario:** An attacker reads the MCP tool schema and discovers Internal IP address '192.168.1.50' in tool 'http_fetch' description. This information reveals internal architecture and can be used to craft targeted attacks against the infrastructure.
+
+**Evidence:**
+
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[http_fetch].description`: ip_address pattern 'Internal IP address' matched
+  ```
+  192.168.1.50
+  ```
+
+**Remediation:** Remove the Internal IP address from tool 'http_fetch' description. Use generic descriptions that don't reveal internal infrastructure. Document internal details in separate, non-exposed documentation.
+
+---
+
+### 🟡 [MG007] Overly broad parameter scope on tool 'manage_users'
+
+**Severity:** medium | **Confidence:** medium | **Category:** static
+
+Parameter 'action' in tool 'manage_users' (server 'vulnerable-server') has completely unbounded string (no enum, pattern, or maxLength). An LLM can pass arbitrary data without validation.
+
+**Exploit Scenario:** An LLM could pass unexpected or malicious data through the unconstrained 'action' parameter because no type, enum, pattern, or length constraints are defined.
+
+**Evidence:**
+
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[manage_users] > parameters[action]`: Parameter 'action' has completely unbounded string (no enum, pattern, or maxLength)
+  ```
+  { "name": "action", "type": "string" }
+  ```
+
+**Remediation:** Constrain parameter 'action' in tool 'manage_users': Add enum values, a regex pattern, or maxLength to constrain the string parameter.
+
+---
+
+### 🟡 [MG007] Overly broad parameter scope on tool 'read_file'
+
+**Severity:** medium | **Confidence:** medium | **Category:** static
+
+Parameter 'path' in tool 'read_file' (server 'vulnerable-server') has completely unbounded string (no enum, pattern, or maxLength). An LLM can pass arbitrary data without validation.
+
+**Exploit Scenario:** An LLM could pass unexpected or malicious data through the unconstrained 'path' parameter because no type, enum, pattern, or length constraints are defined.
+
+**Evidence:**
+
+- `fixtures/vulnerable.tools.json > servers[vulnerable-server] > tools[read_file] > parameters[path]`: Parameter 'path' has completely unbounded string (no enum, pattern, or maxLength)
+  ```
+  { "name": "path", "type": "string" }
+  ```
+
+**Remediation:** Constrain parameter 'path' in tool 'read_file': Add enum values, a regex pattern, or maxLength to constrain the string parameter.
+
+---

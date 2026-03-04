@@ -1,0 +1,33 @@
+{
+  "servers": [
+    {
+      "name": "custom-tools",
+      "description": "A generic MCP server with custom tools",
+      "transport": "stdio",
+      "tools": [
+        {
+          "name": "run_script",
+          "description": "Execute a script on the system",
+          "parameters": [
+            {
+              "name": "script",
+              "type": "string",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "read_data",
+          "description": "Read data from a source",
+          "parameters": [
+            {
+              "name": "source",
+              "type": "string",
+              "required": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

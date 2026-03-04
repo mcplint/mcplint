@@ -1,0 +1,9 @@
+- id: mcplint
+  name: mcplint
+  description: Static security analyzer for MCP configurations
+  entry: mcplint scan
+  language: rust
+  types: [json]
+  files: '(mcp|claude_desktop_config|mcp_settings|mcp_config)\.(json)$'
+  args: ['--fail-on', 'high']
+  require_serial: false

@@ -1,0 +1,52 @@
+{
+  "servers": [
+    {
+      "name": "insecure-api",
+      "description": "API server",
+      "tools": [
+        {
+          "name": "call_api",
+          "description": "Call the API",
+          "parameters": []
+        }
+      ],
+      "auth": { "type": "bearer", "token_source": "env" },
+      "transport": "http",
+      "url": "http://api.production.example.com/mcp"
+    },
+    {
+      "name": "local-dev",
+      "description": "Local dev server",
+      "tools": [],
+      "auth": { "type": "none" },
+      "transport": "http",
+      "url": "http://localhost:3000"
+    },
+    {
+      "name": "ws-server",
+      "description": "WebSocket server",
+      "tools": [],
+      "auth": { "type": "none" },
+      "transport": "websocket",
+      "url": "ws://streaming.example.com/ws"
+    },
+    {
+      "name": "secure-api",
+      "description": "Secure API",
+      "tools": [],
+      "auth": { "type": "bearer", "token_source": "env" },
+      "transport": "https",
+      "url": "https://api.example.com/v1"
+    },
+    {
+      "name": "env-url-server",
+      "description": "Server with URL in env",
+      "tools": [],
+      "auth": { "type": "none" },
+      "transport": "stdio",
+      "env": {
+        "BACKEND_URL": "http://internal.corp.net:8080/api"
+      }
+    }
+  ]
+}

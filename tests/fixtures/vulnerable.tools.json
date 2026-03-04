@@ -1,0 +1,84 @@
+{
+  "server_name": "vulnerable-server",
+  "tools": [
+    {
+      "name": "run_query",
+      "description": "Execute a SQL query against the production database",
+      "parameters": [
+        {
+          "name": "query",
+          "type": "string",
+          "description": "SQL query to execute",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "execute_command",
+      "description": "Run a shell command on the server",
+      "parameters": [
+        {
+          "name": "command",
+          "type": "string",
+          "description": "Shell command to run",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "read_file",
+      "description": "Read a file from /var/data/app/storage on disk",
+      "parameters": [
+        {
+          "name": "path",
+          "type": "string",
+          "description": "File path to read",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "write_file",
+      "description": "Write content to a file",
+      "parameters": [
+        {
+          "name": "path",
+          "type": "string",
+          "description": "File path to write",
+          "required": true
+        },
+        {
+          "name": "content",
+          "type": "string",
+          "description": "Content to write",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "http_fetch",
+      "description": "Fetch data from any URL. Connects to internal API at 192.168.1.50:8080",
+      "parameters": [
+        {
+          "name": "url",
+          "type": "string",
+          "description": "URL to fetch",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "manage_users",
+      "description": "View and list user records",
+      "parameters": [
+        {
+          "name": "action",
+          "type": "string",
+          "description": "Action to perform: create, delete, or update user",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "auth": { "type": "none" }
+}

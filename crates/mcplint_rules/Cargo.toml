@@ -1,0 +1,13 @@
+[package]
+name = "mcplint_rules"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Built-in security rules for mcplint"
+
+[dependencies]
+mcplint_core = { path = "../mcplint_core", version = "0.1.0" }
+serde_json = "1"
+regex = "1"
