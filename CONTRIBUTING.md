@@ -42,20 +42,20 @@ All PRs must pass `cargo test`, `cargo clippy -- -D warnings`, and `cargo fmt --
 
 ## Architecture
 
-Five-crate workspace with unidirectional dependencies:
+Six-crate workspace with unidirectional dependencies:
 
 ```
-mcplint_cli          Binary entry point (clap CLI)
-├── mcplint_core     Data models, adapters, config, rule registry
-├── mcplint_rules    Security rules (MG001–MG006)
-├── mcplint_semantic Reserved for future semantic analysis
-└── mcplint_report   Output formatters (text, JSON, markdown, SARIF)
+mcplint_cli            Binary entry point (clap CLI)
+├── mcplint_core       Data models, adapters, config, rule registry, fix engine
+├── mcplint_rules      Security rules (MG001–MG009)
+├── mcplint_report     Output formatters (text, JSON, markdown, SARIF)
+└── mcplint_mcp_server MCP server mode + live server scanner
 ```
 
 ### Analysis Pipeline
 
 ```
-Input JSON → Adapter (auto-detects format) → McpConfig → ScanContext → RuleRegistry → Findings → Config Policy → Formatter
+Input JSON (or live MCP server) → Adapter (auto-detects format) → McpConfig → ScanContext → RuleRegistry → Findings → Config Policy → Formatter
 ```
 
 ## Adding a New Rule
@@ -68,6 +68,9 @@ Input JSON → Adapter (auto-detects format) → McpConfig → ScanContext → R
        fn name(&self) -> &'static str { "your-rule-name" }
        fn description(&self) -> &'static str { "..." }
        fn category(&self) -> FindingCategory { ... }
+       fn cwe_ids(&self) -> &'static [u32] { &[] }
+       fn owasp_ids(&self) -> &'static [&'static str] { &[] }
+       fn owasp_mcp_ids(&self) -> &'static [&'static str] { &[] }
        fn run(&self, ctx: &ScanContext) -> Vec<Finding> { ... }
        fn explain(&self) -> &'static str { "..." }
    }

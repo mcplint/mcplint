@@ -26,7 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 ### Changed
 - Rule trait extended with `cwe_ids()`, `owasp_ids()`, `rationale()`, `references()` methods
 - SARIF output now includes CWE and OWASP tags in rule metadata
-- Exit codes standardized: 0 (clean), 1 (findings), 2 (error)
+- Exit codes standardized: 0 (clean), 1 (operational error), 2 (findings/policy violation)
 
 ## [0.1.0] — 2026-02-14
 
