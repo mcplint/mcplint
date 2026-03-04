@@ -42,6 +42,20 @@ cargo insta review
 
 All PRs must pass `cargo test`, `cargo clippy -- -D warnings`, and `cargo fmt --check`.
 
+## Release Workflow
+
+Use the GitHub Actions workflow `.github/workflows/release-cut.yml`:
+
+1. Run **Release Cut** with:
+   - `mode=prepare`
+   - `version=<x.y.z>`
+2. Review and merge the generated release PR.
+3. Run **Release Cut** again with:
+   - `mode=tag`
+   - `version=<x.y.z>`
+
+Pushing `v<x.y.z>` triggers `.github/workflows/release.yml` to build artifacts and publish release outputs.
+
 ## Architecture
 
 Six-crate workspace with unidirectional dependencies:

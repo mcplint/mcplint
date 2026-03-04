@@ -1,0 +1,173 @@
+name: Release Cut
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Release mode: prepare (open PR with version bumps) or tag (push vX.Y.Z tag from main)'
+        required: true
+        type: choice
+        options:
+          - prepare
+          - tag
+      version:
+        description: 'SemVer without v prefix (e.g., 0.1.1)'
+        required: true
+        type: string
+      run-checks:
+        description: 'Run cargo check during prepare'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  prepare:
+    if: ${{ inputs.mode == 'prepare' }}
+    name: Prepare Release PR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate version input
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Invalid version '$VERSION'. Expected SemVer like 0.1.1"
+            exit 1
+          fi
+
+      - name: Ensure release tag does not already exist
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if git rev-parse "v${VERSION}" >/dev/null 2>&1; then
+            echo "::error::Tag v${VERSION} already exists"
+            exit 1
+          fi
+
+      - name: Bump versions
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          # Workspace version
+          perl -0pi -e 's/(?m)^version = "[0-9]+\.[0-9]+\.[0-9]+"$/version = "'"$VERSION"'"/' Cargo.toml
+
+          # Internal crate dependency pins in crate manifests
+          perl -0pi -e 's/(mcplint_core\s*=\s*\{[^}]*version\s*=\s*")[^"]+/\1'"$VERSION"'/g' crates/*/Cargo.toml
+          perl -0pi -e 's/(mcplint_rules\s*=\s*\{[^}]*version\s*=\s*")[^"]+/\1'"$VERSION"'/g' crates/*/Cargo.toml
+          perl -0pi -e 's/(mcplint_report\s*=\s*\{[^}]*version\s*=\s*")[^"]+/\1'"$VERSION"'/g' crates/*/Cargo.toml
+
+          # npm wrapper package version
+          perl -0pi -e 's/"version":\s*"[0-9]+\.[0-9]+\.[0-9]+"/"version": "'"$VERSION"'"/' npm/package.json
+
+      - name: Verify changelog entry exists
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if ! grep -q "^## \[${VERSION}\]" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md is missing '## [${VERSION}]' entry"
+            exit 1
+          fi
+
+      - name: Install Rust toolchain
+        if: ${{ inputs['run-checks'] }}
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cargo check
+        if: ${{ inputs['run-checks'] }}
+        run: cargo check --all-targets --locked
+
+      - name: Show changed files
+        run: git status --short
+
+      - name: Create Release PR
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: release/v${{ inputs.version }}
+          delete-branch: true
+          commit-message: release: v${{ inputs.version }}
+          title: release: v${{ inputs.version }}
+          body: |
+            Release prep for `v${{ inputs.version }}`.
+
+            This PR updates version pins and expects:
+            - `CHANGELOG.md` has `## [${{ inputs.version }}]`
+            - CI is green
+
+            After merge, run **Release Cut** workflow again with:
+            - `mode=tag`
+            - `version=${{ inputs.version }}`
+
+  tag:
+    if: ${{ inputs.mode == 'tag' }}
+    name: Create Release Tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate version input
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Invalid version '$VERSION'. Expected SemVer like 0.1.1"
+            exit 1
+          fi
+
+      - name: Ensure workflow is run from main
+        run: |
+          if [ "${GITHUB_REF_NAME}" != "main" ]; then
+            echo "::error::Run tag mode from main branch. Current: ${GITHUB_REF_NAME}"
+            exit 1
+          fi
+
+      - name: Ensure tag does not already exist
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if git rev-parse "v${VERSION}" >/dev/null 2>&1; then
+            echo "::error::Tag v${VERSION} already exists"
+            exit 1
+          fi
+
+      - name: Verify repo version matches input
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          CURRENT=$(grep '^version = "' Cargo.toml | head -1 | sed -E 's/version = "([^"]+)"/\1/')
+          if [ "$CURRENT" != "$VERSION" ]; then
+            echo "::error::Cargo.toml version ($CURRENT) does not match input ($VERSION)"
+            exit 1
+          fi
+
+      - name: Verify changelog entry exists
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if ! grep -q "^## \[${VERSION}\]" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md is missing '## [${VERSION}]' entry"
+            exit 1
+          fi
+
+      - name: Create and push tag
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "v${VERSION}" -m "Release v${VERSION}"
+          git push origin "v${VERSION}"
