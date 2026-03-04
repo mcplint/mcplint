@@ -64,9 +64,9 @@ jobs:
           perl -0pi -e 's/(?m)^version = "[0-9]+\.[0-9]+\.[0-9]+"$/version = "'"$VERSION"'"/' Cargo.toml
 
           # Internal crate dependency pins in crate manifests
-          perl -0pi -e 's/(mcplint_core\s*=\s*\{[^}]*version\s*=\s*")[^"]+/\1'"$VERSION"'/g' crates/*/Cargo.toml
-          perl -0pi -e 's/(mcplint_rules\s*=\s*\{[^}]*version\s*=\s*")[^"]+/\1'"$VERSION"'/g' crates/*/Cargo.toml
-          perl -0pi -e 's/(mcplint_report\s*=\s*\{[^}]*version\s*=\s*")[^"]+/\1'"$VERSION"'/g' crates/*/Cargo.toml
+          perl -0pi -e 's/(mcplint-core\s*=\s*\{[^}]*version\s*=\s*")[^"]+/\1'"$VERSION"'/g' crates/*/Cargo.toml
+          perl -0pi -e 's/(mcplint-rules\s*=\s*\{[^}]*version\s*=\s*")[^"]+/\1'"$VERSION"'/g' crates/*/Cargo.toml
+          perl -0pi -e 's/(mcplint-report\s*=\s*\{[^}]*version\s*=\s*")[^"]+/\1'"$VERSION"'/g' crates/*/Cargo.toml
 
           # npm wrapper package version
           perl -0pi -e 's/"version":\s*"[0-9]+\.[0-9]+\.[0-9]+"/"version": "'"$VERSION"'"/' npm/package.json

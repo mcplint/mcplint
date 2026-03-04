@@ -28,7 +28,7 @@ cargo build
 cargo test
 
 # Run tests for a specific crate
-cargo test -p mcplint_core
+cargo test -p mcplint-core
 
 # Lint
 cargo clippy --all-targets -- -D warnings
@@ -61,11 +61,11 @@ Pushing `v<x.y.z>` triggers `.github/workflows/release.yml` to build artifacts a
 Six-crate workspace with unidirectional dependencies:
 
 ```
-mcplint_cli            Binary entry point (clap CLI)
-├── mcplint_core       Data models, adapters, config, rule registry, fix engine
-├── mcplint_rules      Security rules (MG001–MG009)
-├── mcplint_report     Output formatters (text, JSON, markdown, SARIF)
-└── mcplint_mcp_server MCP server mode + live server scanner
+mcplint-cli            Binary entry point (clap CLI)
+├── mcplint-core       Data models, adapters, config, rule registry, fix engine
+├── mcplint-rules      Security rules (MG001–MG009)
+├── mcplint-report     Output formatters (text, JSON, markdown, SARIF)
+└── mcplint-mcp-server MCP server mode + live server scanner
 ```
 
 ### Analysis Pipeline
