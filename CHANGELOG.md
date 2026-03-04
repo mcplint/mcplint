@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ## [Unreleased]
 
+## [0.1.1] — 2026-03-04
+
 ### Added
 - **MCP server mode** (`mcplint mcp serve`) — exposes scanning as MCP tools for AI agents via stdio transport
 - **Live server scanning** (`mcplint scan --server`) — connect to running MCP servers (stdio/HTTP) and scan discovered tools
@@ -40,5 +42,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - Multi-platform release builds (Linux, macOS, Windows)
 - Precise JSON evidence tracking with line/column source locations
 
-[Unreleased]: https://github.com/mcplint/mcplint/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/mcplint/mcplint/releases/tag/v0.1.0
+[Unreleased]: https://github.com/mcplint/mcplint/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/mcplint/mcplint/releases/tag/v0.1.1
+[0.1.0]: https://github.com/mcplint/mcplint/compare/v0.1.0...v0.1.1
