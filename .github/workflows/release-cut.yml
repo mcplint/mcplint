@@ -61,15 +61,15 @@ jobs:
           VERSION: ${{ inputs.version }}
         run: |
           # Workspace version
-          perl -0pi -e 's/(?m)^version = "[0-9]+\.[0-9]+\.[0-9]+"$/version = "'"$VERSION"'"/' Cargo.toml
+          perl -0pi -e 's/(?m)^version = "[0-9]+\.[0-9]+\.[0-9]+"$/"version = \"$ENV{VERSION}\""/me' Cargo.toml
 
           # Internal crate dependency pins in crate manifests
-          perl -0pi -e 's/(mcplint-core\s*=\s*\{[^}]*version\s*=\s*")[^"]+/\1'"$VERSION"'/g' crates/*/Cargo.toml
-          perl -0pi -e 's/(mcplint-rules\s*=\s*\{[^}]*version\s*=\s*")[^"]+/\1'"$VERSION"'/g' crates/*/Cargo.toml
-          perl -0pi -e 's/(mcplint-report\s*=\s*\{[^}]*version\s*=\s*")[^"]+/\1'"$VERSION"'/g' crates/*/Cargo.toml
+          perl -0pi -e 's/(mcplint-core\s*=\s*\{[^}]*version\s*=\s*")[^"]+/${1}$ENV{VERSION}/g' crates/*/Cargo.toml
+          perl -0pi -e 's/(mcplint-rules\s*=\s*\{[^}]*version\s*=\s*")[^"]+/${1}$ENV{VERSION}/g' crates/*/Cargo.toml
+          perl -0pi -e 's/(mcplint-report\s*=\s*\{[^}]*version\s*=\s*")[^"]+/${1}$ENV{VERSION}/g' crates/*/Cargo.toml
 
           # npm wrapper package version
-          perl -0pi -e 's/"version":\s*"[0-9]+\.[0-9]+\.[0-9]+"/"version": "'"$VERSION"'"/' npm/package.json
+          perl -0pi -e 's/"version":\s*"[0-9]+\.[0-9]+\.[0-9]+"/"version": \"$ENV{VERSION}\"/g' npm/package.json
 
       - name: Verify changelog entry exists
         env:
