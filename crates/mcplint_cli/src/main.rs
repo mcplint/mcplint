@@ -38,7 +38,7 @@ enum Commands {
         #[arg(long, value_enum)]
         format: Option<FormatArg>,
 
-        /// Fail with exit code 1 if findings at or above this severity are found
+        /// Fail with exit code 2 if findings at or above this severity are found
         #[arg(long, value_enum)]
         fail_on: Option<SeverityArg>,
 
@@ -184,7 +184,7 @@ enum BaselineAction {
         /// Output format for diff results
         #[arg(long, value_enum, default_value = "text")]
         format: DiffFormatArg,
-        /// Exit with code 1 if risky drift is detected
+        /// Exit with code 2 if risky drift is detected
         #[arg(long)]
         fail_on_drift: bool,
     },

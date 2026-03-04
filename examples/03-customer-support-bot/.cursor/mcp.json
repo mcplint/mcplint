@@ -1,0 +1,43 @@
+{
+  "mcpServers": {
+    "zendesk-crm": {
+      "command": "npx",
+      "args": ["-y", "@acme/mcp-zendesk"],
+      "env": {
+        "ZENDESK_API_TOKEN": "${ZENDESK_TOKEN}",
+        "ZENDESK_SUBDOMAIN": "acme-support"
+      }
+    },
+    "knowledge-base": {
+      "command": "node",
+      "args": ["./mcp-servers/kb-server/index.js"],
+      "env": {
+        "PINECONE_API_KEY": "${PINECONE_KEY}",
+        "OPENAI_API_KEY": "sk-proj-EXAMPLE_KEY_DO_NOT_USE_1234567890abcdef12345678"
+      }
+    },
+    "email-sender": {
+      "command": "npx",
+      "args": ["-y", "@acme/mcp-email"],
+      "env": {
+        "SENDGRID_API_KEY": "${SENDGRID_KEY}",
+        "FROM_ADDRESS": "support@acme.com"
+      }
+    },
+    "customer-db": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "env": {
+        "POSTGRES_CONNECTION_STRING": "${CUSTOMER_DB_URL}"
+      }
+    },
+    "metrics-dashboard": {
+      "command": "npx",
+      "args": ["-y", "@acme/mcp-grafana"],
+      "env": {
+        "GRAFANA_URL": "http://grafana.internal:3000",
+        "GRAFANA_API_KEY": "${GRAFANA_KEY}"
+      }
+    }
+  }
+}

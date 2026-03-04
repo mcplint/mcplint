@@ -52,7 +52,8 @@ if [ "$MODE" = "scan" ]; then
   if [ "$FORMAT" = "sarif" ]; then
     SARIF_FILE="${RUNNER_TEMP:-/tmp}/mcplint-results.sarif"
     # shellcheck disable=SC2086
-    mcplint scan "$SCAN_PATH" --format sarif --fail-on "$FAIL_ON" $CONFIG_FLAG $SAVE_FLAG > "$SARIF_FILE" 2>&1
+    # Keep SARIF pure JSON on stdout; let diagnostics flow to stderr/logs.
+    mcplint scan "$SCAN_PATH" --format sarif --fail-on "$FAIL_ON" $CONFIG_FLAG $SAVE_FLAG > "$SARIF_FILE"
     EXIT_CODE=$?
     extract_sarif_counts "$SARIF_FILE"
     echo "sarif-file=${SARIF_FILE}" >> "$GITHUB_OUTPUT"

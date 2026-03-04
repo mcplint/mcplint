@@ -1,0 +1,139 @@
+{
+  "servers": [
+    {
+      "name": "data-ingestion",
+      "description": "Ingests CSV/JSON from S3 and partner SFTP servers. Connects to s3://acme-data-lake/raw/ and sftp://partner-feed:22",
+      "tools": [
+        {
+          "name": "fetch_s3_object",
+          "description": "Download any object from the S3 data lake",
+          "parameters": [
+            {
+              "name": "bucket",
+              "type": "string",
+              "description": "S3 bucket name",
+              "required": true
+            },
+            {
+              "name": "key",
+              "type": "string",
+              "description": "S3 object key (path)",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "sftp_download",
+          "description": "Download a file from the partner SFTP server",
+          "parameters": [
+            {
+              "name": "remote_path",
+              "type": "string",
+              "description": "Path on the SFTP server",
+              "required": true
+            }
+          ]
+        }
+      ],
+      "auth": { "type": "none" },
+      "transport": "stdio",
+      "env": {
+        "AWS_ACCESS_KEY_ID": "AKIAEXAMPLEKEYID1234",
+        "AWS_SECRET_ACCESS_KEY": "EXAMPLE_SECRET_KEY_DO_NOT_USE_1234567890ab",
+        "SFTP_PASSWORD": "EXAMPLE_PASSWORD_DO_NOT_USE"
+      }
+    },
+    {
+      "name": "transform-engine",
+      "description": "Runs Python transform scripts on ingested data",
+      "tools": [
+        {
+          "name": "run_transform",
+          "description": "Execute an arbitrary Python script on the data",
+          "parameters": [
+            {
+              "name": "script",
+              "type": "string",
+              "description": "Python code to execute for the transformation",
+              "required": true
+            },
+            {
+              "name": "input_path",
+              "type": "string",
+              "description": "Path to the input data file",
+              "required": true
+            }
+          ]
+        }
+      ],
+      "auth": { "type": "none" },
+      "transport": "stdio"
+    },
+    {
+      "name": "data-warehouse",
+      "description": "Loads transformed data into the analytics warehouse",
+      "tools": [
+        {
+          "name": "execute_sql",
+          "description": "Run SQL statements against the data warehouse",
+          "parameters": [
+            {
+              "name": "sql",
+              "type": "string",
+              "description": "SQL statement to execute (INSERT, CREATE TABLE, etc.)",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "bulk_load",
+          "description": "Bulk load a CSV file into a table",
+          "parameters": [
+            {
+              "name": "table_name",
+              "type": "string",
+              "description": "Target table",
+              "required": true
+            },
+            {
+              "name": "file_path",
+              "type": "string",
+              "description": "Local path to the CSV file",
+              "required": true
+            }
+          ]
+        }
+      ],
+      "auth": { "type": "none" },
+      "transport": "http",
+      "url": "http://warehouse.internal:8080/mcp"
+    },
+    {
+      "name": "notification-hub",
+      "description": "Sends Slack/email alerts when pipeline completes or fails",
+      "tools": [
+        {
+          "name": "send_notification",
+          "description": "Send a notification to a channel",
+          "parameters": [
+            {
+              "name": "channel",
+              "type": "string",
+              "description": "Slack channel or email address",
+              "required": true
+            },
+            {
+              "name": "message",
+              "type": "string",
+              "description": "Notification message body",
+              "required": true
+            }
+          ]
+        }
+      ],
+      "auth": { "type": "api_key", "header": "X-Notify-Key" },
+      "transport": "https",
+      "url": "https://hooks.slack.com/mcp/T00000000/B00000000"
+    }
+  ]
+}

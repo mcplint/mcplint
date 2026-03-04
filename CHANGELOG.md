@@ -14,7 +14,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - `--stdin` support for scanning piped input (`cat config.json | mcplint scan --stdin`)
 - Pre-commit hook support via `.pre-commit-hooks.yaml`
 - Declarative custom rule system via `.mcplint.toml`
-- `--format` flag on `list-rules` and `explain` commands (text/json)
 - npm wrapper package (`@mcplint/cli`) for `npx` usage
 - Homebrew tap (`brew tap mcplint/tap && brew install mcplint`)
 - `install.sh` curl-pipe-bash installer

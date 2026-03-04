@@ -1,0 +1,35 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/"],
+      "env": {}
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_EXAMPLE_TOKEN_DO_NOT_USE_1234567890ab"
+      }
+    },
+    "postgres": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "env": {
+        "POSTGRES_CONNECTION_STRING": "postgresql://admin:EXAMPLE_PASSWORD@db.myapp.io:5432/production"
+      }
+    },
+    "shell": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-shell"]
+    },
+    "vercel-deploy": {
+      "command": "node",
+      "args": ["/usr/local/lib/mcp-vercel/index.js"],
+      "env": {
+        "VERCEL_TOKEN": "vcel_EXAMPLE_TOKEN_DO_NOT_USE_1234567890",
+        "VERCEL_ORG_ID": "team_mycompany"
+      }
+    }
+  }
+}

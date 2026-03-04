@@ -1,0 +1,56 @@
+{
+  "mcp": {
+    "servers": {
+      "kubernetes": {
+        "command": "npx",
+        "args": ["-y", "@acme/mcp-kubernetes"],
+        "env": {
+          "KUBECONFIG": "/home/user/.kube/config",
+          "K8S_NAMESPACE": "production"
+        }
+      },
+      "terraform": {
+        "command": "npx",
+        "args": ["-y", "@hashicorp/terraform-mcp-server"],
+        "env": {
+          "TF_TOKEN_app_terraform_io": "atlastoken_EXAMPLE_DO_NOT_USE",
+          "TF_VAR_db_password": "EXAMPLE_PASSWORD_DO_NOT_USE",
+          "AWS_ACCESS_KEY_ID": "AKIAEXAMPLEKEYID1234",
+          "AWS_SECRET_ACCESS_KEY": "EXAMPLE_SECRET_KEY_DO_NOT_USE_1234567890ab"
+        }
+      },
+      "ci-cd": {
+        "command": "node",
+        "args": ["/opt/mcp-servers/github-actions/server.js"],
+        "env": {
+          "GITHUB_TOKEN": "${GH_TOKEN}",
+          "GITHUB_ORG": "acme-corp"
+        }
+      },
+      "pagerduty": {
+        "command": "npx",
+        "args": ["-y", "@acme/mcp-pagerduty"],
+        "env": {
+          "PAGERDUTY_API_KEY": "${PD_KEY}"
+        }
+      },
+      "log-search": {
+        "command": "npx",
+        "args": ["-y", "@acme/mcp-datadog"],
+        "env": {
+          "DD_API_KEY": "${DD_API_KEY}",
+          "DD_APP_KEY": "${DD_APP_KEY}",
+          "DD_SITE": "datadoghq.com"
+        }
+      },
+      "shell-access": {
+        "command": "npx",
+        "args": ["-y", "@modelcontextprotocol/server-shell"]
+      },
+      "filesystem": {
+        "command": "npx",
+        "args": ["-y", "@modelcontextprotocol/server-filesystem", "/"]
+      }
+    }
+  }
+}

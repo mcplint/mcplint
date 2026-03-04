@@ -2,6 +2,8 @@
 
 Thank you for your interest in contributing! This guide will help you get started.
 
+Please review and follow the [Code of Conduct](CODE_OF_CONDUCT.md) in all project interactions.
+
 ## Prerequisites
 
 - **Rust 1.75+** — install via [rustup](https://rustup.rs)

@@ -1,0 +1,114 @@
+{
+  "server_name": "research-agent",
+  "tools": [
+    {
+      "name": "web_scrape",
+      "description": "Scrape and extract content from any URL. Uses headless Chrome with proxy rotation. Internal proxy at http://proxy.lab.internal:8118",
+      "parameters": [
+        {
+          "name": "url",
+          "type": "string",
+          "description": "URL to scrape",
+          "required": true
+        },
+        {
+          "name": "selector",
+          "type": "string",
+          "description": "CSS selector to extract",
+          "required": false
+        },
+        {
+          "name": "javascript",
+          "type": "string",
+          "description": "Custom JavaScript to execute in the page context before extraction",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "search_arxiv",
+      "description": "Search arXiv for academic papers",
+      "parameters": [
+        {
+          "name": "query",
+          "type": "string",
+          "description": "Search query",
+          "required": true
+        },
+        {
+          "name": "max_results",
+          "type": "number",
+          "description": "Maximum number of results",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "save_document",
+      "description": "Save a research document to the local knowledge store",
+      "parameters": [
+        {
+          "name": "title",
+          "type": "string",
+          "description": "Document title",
+          "required": true
+        },
+        {
+          "name": "content",
+          "type": "string",
+          "description": "Document content (text or HTML)",
+          "required": true
+        },
+        {
+          "name": "path",
+          "type": "string",
+          "description": "File path to save (e.g. /data/research/paper.md)",
+          "required": true
+        },
+        {
+          "name": "metadata",
+          "type": "object",
+          "description": "Arbitrary metadata to attach to the document",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "summarize_text",
+      "description": "Summarize a block of text using the LLM",
+      "parameters": [
+        {
+          "name": "text",
+          "type": "string",
+          "description": "Text to summarize",
+          "required": true
+        },
+        {
+          "name": "options",
+          "type": "object",
+          "description": "Summarization options",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "run_analysis",
+      "description": "Run a data analysis script",
+      "parameters": [
+        {
+          "name": "code",
+          "type": "string",
+          "description": "Python code for the analysis",
+          "required": true
+        },
+        {
+          "name": "datasets",
+          "type": "array",
+          "description": "List of dataset file paths to load",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "auth": { "type": "none" }
+}

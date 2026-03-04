@@ -374,7 +374,7 @@ accidental suppression of new critical issues.
 
 ```yaml
 - uses: actions/checkout@v4
-- uses: mcplint/mcplint-action@v1
+- uses: mcplint/mcplint/.github/action@v1
   with:
     path: .
 ```
@@ -393,7 +393,7 @@ jobs:
       pull-requests: write     # for PR comments
     steps:
       - uses: actions/checkout@v4
-      - uses: mcplint/mcplint-action@v1
+      - uses: mcplint/mcplint/.github/action@v1
         id: mcplint
         with:
           path: './configs'
@@ -418,7 +418,7 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
-      - uses: mcplint/mcplint-action@v1
+      - uses: mcplint/mcplint/.github/action@v1
         with:
           mode: diff
           path: './configs'
@@ -438,7 +438,7 @@ git add .mcplint-baseline.json && git commit -m "Add mcplint baseline"
 ### Conditional steps based on results
 
 ```yaml
-- uses: mcplint/mcplint-action@v1
+- uses: mcplint/mcplint/.github/action@v1
   id: mcplint
   with:
     fail-on: high

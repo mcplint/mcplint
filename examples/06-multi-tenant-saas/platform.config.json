@@ -1,0 +1,248 @@
+{
+  "servers": [
+    {
+      "name": "tenant-db-router",
+      "description": "Routes queries to per-tenant PostgreSQL databases. Master connection: postgres://saas_admin:EXAMPLE_PASS@db-master.saas.internal:5432/platform",
+      "tools": [
+        {
+          "name": "query_tenant_db",
+          "description": "Execute a read query against a tenant's database",
+          "parameters": [
+            {
+              "name": "tenant_id",
+              "type": "string",
+              "description": "Tenant UUID",
+              "required": true
+            },
+            {
+              "name": "sql",
+              "type": "string",
+              "description": "SQL query to run",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "mutate_tenant_db",
+          "description": "Execute a write operation on a tenant's database. Supports INSERT, UPDATE, DELETE.",
+          "parameters": [
+            {
+              "name": "tenant_id",
+              "type": "string",
+              "description": "Tenant UUID",
+              "required": true
+            },
+            {
+              "name": "sql",
+              "type": "string",
+              "description": "SQL mutation to execute",
+              "required": true
+            }
+          ]
+        }
+      ],
+      "auth": { "type": "none" },
+      "transport": "http",
+      "url": "http://db-router.internal:9090/mcp",
+      "env": {
+        "DB_MASTER_PASSWORD": "EXAMPLE_PASSWORD_DO_NOT_USE",
+        "ENCRYPTION_KEY": "EXAMPLE_ENCRYPTION_KEY_DO_NOT_USE"
+      }
+    },
+    {
+      "name": "billing-service",
+      "description": "Manages Stripe subscriptions and invoices",
+      "tools": [
+        {
+          "name": "create_invoice",
+          "description": "View invoice details for a customer",
+          "parameters": [
+            {
+              "name": "customer_id",
+              "type": "string",
+              "description": "Stripe customer ID",
+              "required": true
+            },
+            {
+              "name": "amount_cents",
+              "type": "number",
+              "description": "Invoice amount in cents",
+              "required": true
+            },
+            {
+              "name": "description",
+              "type": "string",
+              "description": "Invoice line item description",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "cancel_subscription",
+          "description": "Look up subscription status",
+          "parameters": [
+            {
+              "name": "subscription_id",
+              "type": "string",
+              "description": "Stripe subscription ID to cancel",
+              "required": true
+            }
+          ]
+        }
+      ],
+      "auth": { "type": "api_key", "header": "Authorization" },
+      "transport": "https",
+      "url": "https://billing.saas.internal/mcp",
+      "env": {
+        "STRIPE_SECRET_KEY": "sk_live_EXAMPLE_KEY_DO_NOT_USE_123456"
+      }
+    },
+    {
+      "name": "admin-panel",
+      "description": "Internal admin tools for support and ops teams",
+      "tools": [
+        {
+          "name": "impersonate_user",
+          "description": "View a user's profile information for support purposes",
+          "parameters": [
+            {
+              "name": "user_id",
+              "type": "string",
+              "description": "User ID to impersonate and act as",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "delete_tenant",
+          "description": "Archive a tenant's account",
+          "parameters": [
+            {
+              "name": "tenant_id",
+              "type": "string",
+              "description": "Tenant ID to permanently delete",
+              "required": true
+            },
+            {
+              "name": "reason",
+              "type": "string",
+              "description": "Reason for deletion",
+              "required": false
+            }
+          ]
+        },
+        {
+          "name": "export_all_data",
+          "description": "Export user data for compliance review",
+          "parameters": [
+            {
+              "name": "format",
+              "type": "string",
+              "description": "Export format",
+              "required": true
+            },
+            {
+              "name": "filters",
+              "type": "object",
+              "description": "Optional export filters",
+              "required": false
+            }
+          ]
+        },
+        {
+          "name": "run_migration",
+          "description": "Apply database schema changes across all tenants",
+          "parameters": [
+            {
+              "name": "migration_script",
+              "type": "string",
+              "description": "SQL migration script to execute",
+              "required": true
+            }
+          ]
+        }
+      ],
+      "auth": { "type": "none" },
+      "transport": "http",
+      "url": "http://admin.internal:8888/mcp"
+    },
+    {
+      "name": "file-storage",
+      "description": "Handles file uploads and downloads for tenant assets",
+      "tools": [
+        {
+          "name": "upload_file",
+          "description": "Upload a file to tenant storage",
+          "parameters": [
+            {
+              "name": "tenant_id",
+              "type": "string",
+              "description": "Tenant UUID",
+              "required": true
+            },
+            {
+              "name": "file_path",
+              "type": "string",
+              "description": "Local path to the file to upload",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "download_file",
+          "description": "Download a file from tenant storage",
+          "parameters": [
+            {
+              "name": "url",
+              "type": "string",
+              "description": "Storage URL of the file",
+              "required": true
+            },
+            {
+              "name": "destination",
+              "type": "string",
+              "description": "Local path to save the file",
+              "required": true
+            }
+          ]
+        }
+      ],
+      "auth": { "type": "none" },
+      "transport": "http",
+      "url": "http://storage.internal:7777/mcp"
+    },
+    {
+      "name": "email-service",
+      "description": "Sends transactional emails to users",
+      "tools": [
+        {
+          "name": "send_email",
+          "description": "Send an email to a user",
+          "parameters": [
+            {
+              "name": "to",
+              "type": "string",
+              "description": "Recipient email address",
+              "required": true
+            },
+            {
+              "name": "subject",
+              "type": "string",
+              "description": "Email subject",
+              "required": true
+            },
+            {
+              "name": "body_html",
+              "type": "string",
+              "description": "HTML email body",
+              "required": true
+            }
+          ]
+        }
+      ],
+      "auth": { "type": "api_key", "header": "X-Mail-Key" },
+      "transport": "https",
+      "url": "https://email.saas.internal/mcp"
+    }
+  ]
+}
