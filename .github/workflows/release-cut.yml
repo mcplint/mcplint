@@ -96,8 +96,8 @@ jobs:
         with:
           branch: release/v${{ inputs.version }}
           delete-branch: true
-          commit-message: release: v${{ inputs.version }}
-          title: release: v${{ inputs.version }}
+          commit-message: "release: v${{ inputs.version }}"
+          title: "release: v${{ inputs.version }}"
           body: |
             Release prep for `v${{ inputs.version }}`.
 
