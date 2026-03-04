@@ -864,17 +864,17 @@ dependencies = [
 ]
 
 [[package]]
-name = "mcplint"
+name = "mcplint-cli"
 version = "0.1.0"
 dependencies = [
  "anyhow",
  "assert_cmd",
  "clap",
  "insta",
- "mcplint_core",
- "mcplint_mcp_server",
- "mcplint_report",
- "mcplint_rules",
+ "mcplint-core",
+ "mcplint-mcp-server",
+ "mcplint-report",
+ "mcplint-rules",
  "regex",
  "serde_json",
  "tempfile",
@@ -882,7 +882,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "mcplint_core"
+name = "mcplint-core"
 version = "0.1.0"
 dependencies = [
  "regex",
@@ -896,13 +896,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "mcplint_mcp_server"
+name = "mcplint-mcp-server"
 version = "0.1.0"
 dependencies = [
  "insta",
- "mcplint_core",
- "mcplint_report",
- "mcplint_rules",
+ "mcplint-core",
+ "mcplint-report",
+ "mcplint-rules",
  "rmcp",
  "serde",
  "serde_json",
@@ -913,19 +913,19 @@ dependencies = [
 ]
 
 [[package]]
-name = "mcplint_report"
+name = "mcplint-report"
 version = "0.1.0"
 dependencies = [
- "mcplint_core",
+ "mcplint-core",
  "serde",
  "serde_json",
 ]
 
 [[package]]
-name = "mcplint_rules"
+name = "mcplint-rules"
 version = "0.1.0"
 dependencies = [
- "mcplint_core",
+ "mcplint-core",
  "regex",
  "serde_json",
 ]

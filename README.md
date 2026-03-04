@@ -45,7 +45,7 @@ npm install -g @mcplint/cli
 **Cargo** (requires Rust 1.75+):
 
 ```sh
-cargo install mcplint
+cargo install mcplint-cli
 ```
 
 **From source:**
@@ -476,7 +476,7 @@ output compatible with [GitHub Code Scanning](https://docs.github.com/en/code-se
 steps:
   - uses: actions/checkout@v4
   - uses: dtolnay/rust-toolchain@stable
-  - run: cargo install mcplint
+  - run: cargo install mcplint-cli
   - run: mcplint scan . --format sarif > results.sarif
   - uses: github/codeql-action/upload-sarif@v4
     if: always()

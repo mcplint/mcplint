@@ -1,5 +1,5 @@
 [package]
-name = "mcplint_core"
+name = "mcplint-core"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
