@@ -10,37 +10,14 @@ Finds exploitable security issues in MCP tool definitions, explains why they're 
 ## Quickstart
 
 ```sh
-# Install from source
-cargo install --git https://github.com/mcplint/mcplint --locked
+# Install from crates.io
+cargo install mcplint-cli
 
 # Scan your Claude Desktop config
 mcplint scan ~/.config/Claude/claude_desktop_config.json --fail-on high --format markdown
 ```
 
 ## Install
-
-**Quick install** (Linux / macOS):
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/mcplint/mcplint/main/install.sh | bash
-```
-
-Set `MCPLINT_VERSION=v0.1.0` to pin a version, or `MCPLINT_INSTALL_DIR` to change the install location (default: `~/.local/bin`).
-
-**Homebrew** (macOS / Linux):
-
-```sh
-brew tap mcplint/tap
-brew install mcplint
-```
-
-**npm** (Node.js 16+):
-
-```sh
-npx @mcplint/cli scan .
-# or install globally
-npm install -g @mcplint/cli
-```
 
 **Cargo** (requires Rust 1.75+):
 
@@ -55,24 +32,10 @@ git clone https://github.com/mcplint/mcplint && cd mcplint
 cargo install --path crates/mcplint_cli
 ```
 
-**Prebuilt binaries** — download from [GitHub Releases](https://github.com/mcplint/mcplint/releases):
-
-| Platform | Target |
-|----------|--------|
-| Linux x86_64 | `x86_64-unknown-linux-gnu` |
-| Linux ARM64 | `aarch64-unknown-linux-gnu` |
-| macOS x86_64 | `x86_64-apple-darwin` |
-| macOS ARM64 | `aarch64-apple-darwin` |
-| Windows x86_64 | `x86_64-pc-windows-msvc` |
-
-> 💡 **Windows is fully supported** — prebuilt binaries, all rules, and all output formats work on Windows. Use `mcplint.exe` after extracting.
-
-```sh
-# Example: Linux x86_64
-curl -LO https://github.com/mcplint/mcplint/releases/latest/download/mcplint-x86_64-unknown-linux-gnu.tar.gz
-tar xzf mcplint-*.tar.gz
-./mcplint --version
-```
+<!-- TODO: Quick install script (curl | bash) -->
+<!-- TODO: Homebrew tap -->
+<!-- TODO: npm wrapper package (@mcplint/cli) -->
+<!-- TODO: Prebuilt binaries via GitHub Releases -->
 
 Scan a directory containing MCP configs (auto-detects Claude Desktop, Cursor, or generic MCP inputs):
 
