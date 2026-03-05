@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ## [Unreleased]
 
+## [0.1.2] — 2026-03-05
+
+### Added
+- Crate-specific READMEs for mcplint-core, mcplint-rules, mcplint-report, mcplint-mcp-server, and mcplint-cli
+- Published mcplint-mcp-server to crates.io
+
+### Changed
+- Each crate now uses its own README on crates.io instead of the root README
+
 ## [0.1.1] — 2026-03-04
 
 ### Added
@@ -42,6 +51,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - Multi-platform release builds (Linux, macOS, Windows)
 - Precise JSON evidence tracking with line/column source locations
 
-[Unreleased]: https://github.com/mcplint/mcplint/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/mcplint/mcplint/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/mcplint/mcplint/releases/tag/v0.1.2
 [0.1.1]: https://github.com/mcplint/mcplint/releases/tag/v0.1.1
 [0.1.0]: https://github.com/mcplint/mcplint/compare/v0.1.0...v0.1.1

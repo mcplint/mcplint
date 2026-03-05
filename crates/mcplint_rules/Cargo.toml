@@ -9,6 +9,6 @@ description = "Built-in security rules for mcplint"
 readme = "README.md"
 
 [dependencies]
-mcplint-core = { path = "../mcplint_core", version = "0.1.0" }
+mcplint-core = { path = "../mcplint_core", version = "0.1.2" }
 serde_json = "1"
 regex = "1"

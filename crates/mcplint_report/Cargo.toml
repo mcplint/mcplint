@@ -9,6 +9,6 @@ description = "Output formatters (text, JSON, Markdown, SARIF) for mcplint"
 readme = "README.md"
 
 [dependencies]
-mcplint-core = { path = "../mcplint_core", version = "0.1.0" }
+mcplint-core = { path = "../mcplint_core", version = "0.1.2" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"

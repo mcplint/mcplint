@@ -16,10 +16,10 @@ name = "mcplint"
 path = "src/main.rs"
 
 [dependencies]
-mcplint-core = { path = "../mcplint_core", version = "0.1.0" }
-mcplint-rules = { path = "../mcplint_rules", version = "0.1.0" }
-mcplint-report = { path = "../mcplint_report", version = "0.1.0" }
-mcplint-mcp-server = { path = "../mcplint_mcp_server", version = "0.1.0" }
+mcplint-core = { path = "../mcplint_core", version = "0.1.2" }
+mcplint-rules = { path = "../mcplint_rules", version = "0.1.2" }
+mcplint-report = { path = "../mcplint_report", version = "0.1.2" }
+mcplint-mcp-server = { path = "../mcplint_mcp_server", version = "0.1.2" }
 clap = { version = "4", features = ["derive"] }
 serde_json = "1"
 anyhow = "1"
@@ -30,7 +30,7 @@ assert_cmd = "2"
 insta = "1"
 regex = "1"
 tempfile = "3"
-mcplint-core = { path = "../mcplint_core", version = "0.1.0" }
-mcplint-rules = { path = "../mcplint_rules", version = "0.1.0" }
-mcplint-report = { path = "../mcplint_report", version = "0.1.0" }
+mcplint-core = { path = "../mcplint_core", version = "0.1.2" }
+mcplint-rules = { path = "../mcplint_rules", version = "0.1.2" }
+mcplint-report = { path = "../mcplint_report", version = "0.1.2" }
 serde_json = "1"
