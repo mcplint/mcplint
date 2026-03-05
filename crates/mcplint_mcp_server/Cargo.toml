@@ -10,7 +10,7 @@ description = "MCP server that exposes mcplint scanning as tools for AI agents"
 readme = "../../README.md"
 keywords = ["mcp", "security", "linter", "model-context-protocol", "mcp-server"]
 categories = ["command-line-utilities", "development-tools"]
-publish = false
+publish = true
 
 [dependencies]
 mcplint-core = { path = "../mcplint_core", version = "0.1.0" }
