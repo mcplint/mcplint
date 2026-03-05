@@ -103,7 +103,7 @@ mcplint can run as a [pre-commit](https://pre-commit.com/) hook:
 # .pre-commit-config.yaml
 repos:
   - repo: https://github.com/mcplint/mcplint
-    rev: v0.1.0
+    rev: v0.1.2
     hooks:
       - id: mcplint
 ```
