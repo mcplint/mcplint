@@ -6,6 +6,7 @@ rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
 description = "Built-in security rules for mcplint"
+readme = "README.md"
 
 [dependencies]
 mcplint-core = { path = "../mcplint_core", version = "0.1.0" }

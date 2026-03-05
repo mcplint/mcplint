@@ -7,7 +7,7 @@ license.workspace = true
 repository.workspace = true
 homepage.workspace = true
 description = "Compiler-style static security analyzer for MCP (Model Context Protocol) configurations"
-readme = "../../README.md"
+readme = "README.md"
 keywords = ["mcp", "security", "static-analysis", "sarif", "agentic-ai"]
 categories = ["command-line-utilities", "development-tools"]
 

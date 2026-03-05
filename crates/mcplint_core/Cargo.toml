@@ -6,6 +6,7 @@ rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
 description = "Core data models, adapters, and analysis framework for mcplint"
+readme = "README.md"
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }
