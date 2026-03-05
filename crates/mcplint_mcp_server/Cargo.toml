@@ -8,7 +8,7 @@ repository.workspace = true
 homepage.workspace = true
 description = "MCP server that exposes mcplint scanning as tools for AI agents"
 readme = "../../README.md"
-keywords = ["mcp", "security", "linter", "model-context-protocol", "mcp-server"]
+keywords = ["mcp", "security", "linter", "mcp-server", "ai-agents"]
 categories = ["command-line-utilities", "development-tools"]
 publish = true
 
