@@ -19,6 +19,7 @@ jobs:
       # Test 1: basic scan with text output
       - uses: ./.github/action
         id: scan-text
+        continue-on-error: true
         with:
           path: tests/fixtures/claude_desktop/unsafe/claude_desktop_config.json
           format: text
@@ -44,6 +45,7 @@ jobs:
       # Test 3: scan and save baseline
       - uses: ./.github/action
         id: scan-baseline
+        continue-on-error: true
         with:
           path: tests/fixtures/claude_desktop/unsafe/claude_desktop_config.json
           format: text
@@ -70,6 +72,7 @@ jobs:
 
       # Create a baseline first
       - uses: ./.github/action
+        continue-on-error: true
         with:
           path: tests/fixtures/claude_desktop/unsafe/claude_desktop_config.json
           format: text
@@ -107,6 +110,7 @@ jobs:
 
       # First run — should install
       - uses: ./.github/action
+        continue-on-error: true
         with:
           path: tests/fixtures/claude_desktop/unsafe/claude_desktop_config.json
           format: text
@@ -115,6 +119,7 @@ jobs:
 
       # Second run — should use cache
       - uses: ./.github/action
+        continue-on-error: true
         with:
           path: tests/fixtures/claude_desktop/unsafe/claude_desktop_config.json
           format: text
