@@ -149,19 +149,17 @@ pub fn auto_load_content(
     content: &str,
     filename_hint: &str,
 ) -> Result<AdapterResult, AdapterError> {
-    // Write to a temp file with the hint name so auto_load's filename-based
-    // detection works correctly.
-    let dir = std::env::temp_dir().join("mcplint-stdin");
-    std::fs::create_dir_all(&dir).map_err(|e| AdapterError::Io {
-        path: dir.display().to_string(),
+    // Write to a uniquely-named temp directory so that concurrent callers
+    // (e.g. parallel tests) never collide on the same path.
+    let tmp_dir = tempfile::tempdir().map_err(|e| AdapterError::Io {
+        path: std::env::temp_dir().display().to_string(),
         source: e,
     })?;
-    let tmp_path = dir.join(filename_hint);
+    let tmp_path = tmp_dir.path().join(filename_hint);
     std::fs::write(&tmp_path, content).map_err(|e| AdapterError::io(&tmp_path, e))?;
 
     let result = auto_load(&tmp_path);
-    let _ = std::fs::remove_file(&tmp_path);
-    let _ = std::fs::remove_dir(&dir);
+    // tmp_dir is dropped here, automatically removing the directory and file.
 
     // Replace the temp path with "<stdin>" in the result
     result.map(|mut r| {

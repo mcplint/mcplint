@@ -25,9 +25,18 @@ else
   DOWNLOAD_URL="https://github.com/mcplint/mcplint/releases/download/v${VERSION}/mcplint-${TARGET}.tar.gz"
 fi
 
-echo "::group::Installing mcplint ${VERSION} for ${TARGET}"
 INSTALL_DIR="${HOME}/.mcplint/bin"
 mkdir -p "$INSTALL_DIR"
+
+# Skip download when the binary was already placed here (e.g. built from source in CI)
+if [ -x "$INSTALL_DIR/mcplint" ]; then
+  echo "mcplint already installed at $INSTALL_DIR/mcplint, skipping download"
+  echo "$INSTALL_DIR" >> "$GITHUB_PATH"
+  echo "Installed mcplint $("${INSTALL_DIR}"/mcplint --version 2>/dev/null || echo "${VERSION}")"
+  exit 0
+fi
+
+echo "::group::Installing mcplint ${VERSION} for ${TARGET}"
 
 # Try unversioned URL first, fall back to versioned for older releases
 if ! curl -fsSL "$DOWNLOAD_URL" | tar -xz -C "$INSTALL_DIR" 2>/dev/null; then

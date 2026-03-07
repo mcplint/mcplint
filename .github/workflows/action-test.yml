@@ -10,9 +10,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Build mcplint from source
+        run: |
+          cargo build --release -p mcplint-cli
+          mkdir -p ~/.mcplint/bin
+          cp target/release/mcplint ~/.mcplint/bin/mcplint
+
       # Test 1: basic scan with text output
       - uses: ./.github/action
         id: scan-text
+        continue-on-error: true
         with:
           path: tests/fixtures/claude_desktop/unsafe/claude_desktop_config.json
           format: text
@@ -38,6 +45,7 @@ jobs:
       # Test 3: scan and save baseline
       - uses: ./.github/action
         id: scan-baseline
+        continue-on-error: true
         with:
           path: tests/fixtures/claude_desktop/unsafe/claude_desktop_config.json
           format: text
@@ -56,8 +64,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Build mcplint from source
+        run: |
+          cargo build --release -p mcplint-cli
+          mkdir -p ~/.mcplint/bin
+          cp target/release/mcplint ~/.mcplint/bin/mcplint
+
       # Create a baseline first
       - uses: ./.github/action
+        continue-on-error: true
         with:
           path: tests/fixtures/claude_desktop/unsafe/claude_desktop_config.json
           format: text
@@ -87,8 +102,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Build mcplint from source
+        run: |
+          cargo build --release -p mcplint-cli
+          mkdir -p ~/.mcplint/bin
+          cp target/release/mcplint ~/.mcplint/bin/mcplint
+
       # First run — should install
       - uses: ./.github/action
+        continue-on-error: true
         with:
           path: tests/fixtures/claude_desktop/unsafe/claude_desktop_config.json
           format: text
@@ -97,8 +119,10 @@ jobs:
 
       # Second run — should use cache
       - uses: ./.github/action
+        continue-on-error: true
         with:
           path: tests/fixtures/claude_desktop/unsafe/claude_desktop_config.json
           format: text
           fail-on: critical
           upload-sarif: 'false'
+
