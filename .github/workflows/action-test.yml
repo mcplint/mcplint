@@ -10,6 +10,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Build mcplint from source
+        run: |
+          cargo build --release -p mcplint-cli
+          mkdir -p ~/.mcplint/bin
+          cp target/release/mcplint ~/.mcplint/bin/mcplint
+
       # Test 1: basic scan with text output
       - uses: ./.github/action
         id: scan-text
@@ -56,6 +62,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Build mcplint from source
+        run: |
+          cargo build --release -p mcplint-cli
+          mkdir -p ~/.mcplint/bin
+          cp target/release/mcplint ~/.mcplint/bin/mcplint
+
       # Create a baseline first
       - uses: ./.github/action
         with:
@@ -87,6 +99,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Build mcplint from source
+        run: |
+          cargo build --release -p mcplint-cli
+          mkdir -p ~/.mcplint/bin
+          cp target/release/mcplint ~/.mcplint/bin/mcplint
+
       # First run — should install
       - uses: ./.github/action
         with:
@@ -102,3 +120,4 @@ jobs:
           format: text
           fail-on: critical
           upload-sarif: 'false'
+
